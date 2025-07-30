@@ -17,5 +17,6 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
         </div>
       </div>
     </section>
+    
   );
 }
