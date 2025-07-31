@@ -49,7 +49,6 @@ export default function AnimatedHome({ userId }: Props) {
           </motion.button>
         </Link>
       </motion.div>
-
     </section>
   );
 }
