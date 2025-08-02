@@ -11,10 +11,12 @@
   "dependencies": {
     "@clerk/localizations": "^3.20.1",
     "@clerk/nextjs": "^6.28.0",
+    "@stripe/stripe-js": "^7.8.0",
     "framer-motion": "^12.23.12",
     "next": "15.4.5",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "stripe": "^18.4.0",
     "zustand": "^5.0.7"
   },
   "devDependencies": {

@@ -33,7 +33,6 @@ export default function RootLayout({
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
           <Hydrate>
-            <NavBar/>
             <main className="bg-white pt-20 h-screen overflow-y-auto overflow-x-hidden">{children}</main>
           </Hydrate>
         </body>

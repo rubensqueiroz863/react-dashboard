@@ -8,7 +8,7 @@ export default function Menu() {
   return (
     <>
       <div
-        className="relative w-6 h-6 flex flex-col justify-between items-center"
+        className="relative cursor-pointer w-6 h-6 flex flex-col justify-between items-center"
         onClick={menu.toggleMenu}
         aria-label="Menu"
       >
