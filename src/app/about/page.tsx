@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 export default function About() {
   return (
-    <div>
+    <div className="pt-20">
       <NavBar />
       <main className="max-w-3xl mx-auto p-6 px-4 sm:px-6 lg:px-8">
         <motion.h1
