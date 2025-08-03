@@ -1,23 +1,23 @@
 import { fetchSubscriptions } from "../actions";
 import NavBar from "../components/NavBar";
-import Subscription from "../components/Subscription";
+import Subscriptions from "../components/Subscriptions";
 
-
-
-export default async function Subscriptions() {
+export default async function Subscription() {
   const { subscriptions } = await fetchSubscriptions();
 
-  const sortedSubscriptions = subscriptions.sort((a, b) => a.price - b.price);
+  const ordered = [subscriptions[2], subscriptions[1], subscriptions[0]];
 
   return (
     <div>
-      <NavBar />
-      
-      <div className="flex flex-col items-center justify-center p-5">
-        {sortedSubscriptions.map((subscription) => (
-          <Subscription key={subscription.id} subscription={subscription} />
-        ))}
+      <NavBar/>
+      <div className="min-h-screen w-full flex flex-col items-center justify-center px-4 py-10">
+          <div className="flex flex-wrap justify-center gap-6 w-full items-stretch">
+            {ordered.map((sub, index) => (
+              <Subscriptions key={index} sub={sub} index={index} />
+            ))}
+          </div>
+        </div>
       </div>
-    </div>
+    
   );
 }

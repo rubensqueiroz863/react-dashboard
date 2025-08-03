@@ -21,7 +21,7 @@ export default function MenuDrawer() {
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
-  }, [menu.isOpen, menu.closeMenu]);
+  }, [menu.isOpen, menu.closeMenu, menu]);
 
   return (
     <motion.div
