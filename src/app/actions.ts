@@ -2,12 +2,12 @@
 "use server";
 
 import { stripe } from "@/lib/stripe";
-import { SubscripitionType } from "@/types/SubscriptionTpe";
+import { SubscriptionType } from "@/types/SubscriptionType";
 
-export async function fetchSubscriptions(): Promise<{ subscriptions: SubscripitionType[] }> {
+export async function fetchSubscriptions(): Promise<{ subscriptions: SubscriptionType[] }> {
   const { data: products } = await stripe.products.list();
 
-  const subscriptions: SubscripitionType[] = [];
+  const subscriptions: SubscriptionType[] = [];
 
   for (const product of products) {
     const prices = await stripe.prices.list({ product: product.id, limit: 1 });
@@ -18,7 +18,7 @@ export async function fetchSubscriptions(): Promise<{ subscriptions: Subscripiti
       subscriptions.push({
         id: product.id,
         name: product.name,
-        description: product.description,
+        description: product.description ?? "",
         price: price.unit_amount / 100, // geralmente o Stripe usa centavos
       });
     }

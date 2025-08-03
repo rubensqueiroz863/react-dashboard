@@ -1,9 +1,21 @@
-"use client";
+'use client';
 
 import { motion } from "framer-motion";
 import { formatPrice } from "@/lib/utils";
 
-export default function Subscriptions({ sub, index }: { sub: any, index: number }) {
+interface Subscription {
+  name: string;
+  description: string;
+  price: number;
+}
+
+export default function Subscriptions({
+  sub,
+  index,
+}: {
+  sub: Subscription;
+  index: number;
+}) {
   const features = [
     [
       "• Sem Conexão Bancária",
@@ -43,7 +55,7 @@ export default function Subscriptions({ sub, index }: { sub: any, index: number 
     >
       <div className="flex-1 flex flex-col">
         <h1 className="text-2xl font-bold">{sub.name}</h1>
-        <p className="py-2 text-md">{sub.description}</p>
+        <p className="py-2 text-md">{sub.description ?? "Sem descrição"}</p>
 
         <div className="space-y-2 text-neutral-500 font-sans text-sm mt-2">
           {features[index].map((feature, i) => (
