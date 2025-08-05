@@ -9,8 +9,8 @@ const isPublicRoute = createRouteMatcher([
   '/bank-connection(.*)',
   '/teste(.*)',
   '/terms(.*)',
-  '/connect.js(.*)',
-  '/api/pluggy-token(.*)',
+  '/api/belvo/link(.*)',
+  '/api/belvo/accounts(.*)',
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
