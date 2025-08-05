@@ -3,7 +3,7 @@ import Header from "../components/Header";
 import Subscriptions from "../components/Subscriptions";
 import type { SubscriptionType } from "@/types/SubscriptionType";
 
-export default async function Subscription() {
+export default async function SubscriptionPage() {
   const { subscriptions }: { subscriptions: SubscriptionType[] } = await fetchSubscriptions();
 
   const ordered = [subscriptions[2], subscriptions[1], subscriptions[0]];

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import TermsOfUse from "../components/TermsOfUse";
 import NavBar from "../components/NavBar";
 
-export default function Terms() {
+export default function TermsPage() {
   const [accepted, setAccepted] = useState(false);
   const [isAccepted, setIsAccepted] = useState(false);
 
