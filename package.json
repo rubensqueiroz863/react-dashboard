@@ -12,6 +12,7 @@
     "@clerk/localizations": "^3.20.1",
     "@clerk/nextjs": "^6.28.0",
     "@stripe/stripe-js": "^7.8.0",
+    "belvo": "^0.28.0",
     "framer-motion": "^12.23.12",
     "next": "15.4.5",
     "pluggy-sdk": "^0.74.0",
@@ -30,5 +31,8 @@
     "eslint-config-next": "15.4.5",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "overrides": {
+    "axios": "^1.4.0"
   }
 }
