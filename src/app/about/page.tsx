@@ -1,15 +1,16 @@
 'use client';
 
+import Footer from "../components/Footer";
 import NavBar from "../components/NavBar";
 import { motion } from "framer-motion";
 
 export default function About() {
   return (
-    <div className="pt-20">
+    <div className="min-h-screen">
       <NavBar />
       <main className="max-w-3xl mx-auto p-6 px-4 sm:px-6 lg:px-8">
         <motion.h1
-          className="text-3xl font-bold mb-6 text-center sm:text-left"
+          className="text-3xl font-bold mb-6 text-center"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
@@ -58,8 +59,8 @@ export default function About() {
                 Este projeto também tem como objetivo consolidar conhecimentos em desenvolvimento web moderno, focando na criação de componentes reutilizáveis, no uso dos hooks do React, no roteamento dinâmico com Next.js e na integração com APIs. É uma iniciativa prática para unir tecnologia e organização financeira em uma única solução.
             </motion.p>
         </motion.section>
-
       </main>
+      <Footer />
     </div>
   );
 }

@@ -3,8 +3,9 @@ import Header from "../components/Header";
 
 export default async function BankConnectionPage() {
     return (
-        <div>
+        <div className="min-h-screen overflow-auto flex flex-col">
             <Header />
+            <hr className="mx-10 mb-45" />
             <BankConnection />
         </div>
     );

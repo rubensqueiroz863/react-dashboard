@@ -1,4 +1,5 @@
 import { fetchSubscriptions } from "../actions";
+import Footer from "../components/Footer";
 import Header from "../components/Header";
 import Subscriptions from "../components/Subscriptions";
 import type { SubscriptionType } from "@/types/SubscriptionType";
@@ -18,6 +19,7 @@ export default async function SubscriptionPage() {
           ))}
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

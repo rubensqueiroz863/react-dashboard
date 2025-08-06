@@ -9,7 +9,7 @@ type Props = {
 
 export default function AnimatedHome({ userId }: Props) {
   return (
-    <section className="flex flex-col w-full items-center justify-center">
+    <section className="flex mb-45 flex-col w-full items-center justify-center">
 
       {/* Títulos */}
       <motion.div
@@ -18,8 +18,9 @@ export default function AnimatedHome({ userId }: Props) {
         transition={{ duration: 0.8 }}
         className="flex items-center justify-center flex-col"
       >
-        <h1 className="text-5xl">Controle suas finanças</h1>
-        <h1 className="text-5xl font-bold">com facilidade</h1>
+        <h1 className="text-5xl mb-5 font-black">FinanX</h1>
+        <h1 className="text-4xl">Controle suas finanças</h1>
+        <h1 className="text-4xl font-bold">com facilidade</h1>
       </motion.div>
 
       {/* Parágrafos */}

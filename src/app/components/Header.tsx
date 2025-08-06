@@ -6,7 +6,7 @@ export default async function Header() {
   const { userId } = await auth();
 
   return (
-    <div className="flex flex-col my-20 bg-white pt-20">
+    <div className="flex flex-col bg-white">
       <NavBar/>
       <AnimatedPage userId={userId} />
     </div>
