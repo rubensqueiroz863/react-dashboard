@@ -90,7 +90,7 @@ export default function BankConnection() {
                             </div>
                         </div>
                         
-                        <div className="hidden md:block w-px mx-10 bg-neutral-300" style={{ minHeight: 200 }} />
+                        <div className="hidden xl:block w-px mx-10 bg-neutral-300" style={{ minHeight: 200 }} />
                         { /* Aqui deve ser adicionada a troca de imagens com resposividade pelos card ao lado */}
                         <div>*Responsividade com troca de imagens</div>
                     </div>
