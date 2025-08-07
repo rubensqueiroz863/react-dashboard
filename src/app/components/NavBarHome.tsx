@@ -40,7 +40,10 @@ export default function NavBarHome() {
       {navItems.map((item, index) => (
         <div
           key={index}
-          ref={(el) => (itemRefs.current[index] = el)}
+          ref={(el) => {
+            itemRefs.current[index] = el; // sem retorno
+        }}
+
           onMouseEnter={() => setHoveredIndex(index)}
           onMouseLeave={() => setHoveredIndex(null)}
           className="relative px-2 text-sm text-center w-40 sm:text-base cursor-pointer"
