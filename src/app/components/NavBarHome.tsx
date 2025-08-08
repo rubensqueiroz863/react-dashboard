@@ -35,7 +35,7 @@ export default function NavBarHome() {
   return (
     <nav
       ref={containerRef}
-      className="relative flex sticky top-0 z-50 bg-neutral-800 text-white items-center justify-around h-12 px-4 sm:px-8 w-full"
+      className="flex sticky top-0 z-50 bg-neutral-800 text-white items-center justify-around h-12 px-4 sm:px-8 w-full"
     >
       {navItems.map((item, index) => (
         <div

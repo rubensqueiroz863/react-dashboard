@@ -40,7 +40,7 @@ export default function AnimatedHome({ userId }: Props) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1, duration: 0.8 }}
       >
-        <Link href={userId ? "/home" : "/sign-in"}>
+        <Link href={userId ? "/overview" : "/sign-in"}>
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
