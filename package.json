@@ -3,22 +3,26 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "prisma generate && next dev",
+    "build": "prisma generate && prisma db push && next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
     "@clerk/localizations": "^3.20.1",
     "@clerk/nextjs": "^6.28.0",
+    "@prisma/client": "^6.13.0",
+    "@stripe/react-stripe-js": "^3.9.0",
     "@stripe/stripe-js": "^7.8.0",
     "belvo": "^0.28.0",
     "framer-motion": "^12.23.12",
     "next": "15.4.5",
     "pluggy-sdk": "^0.74.0",
+    "prisma": "^6.13.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "stripe": "^18.4.0",
+    "svix": "^1.71.0",
     "zustand": "^5.0.7"
   },
   "devDependencies": {

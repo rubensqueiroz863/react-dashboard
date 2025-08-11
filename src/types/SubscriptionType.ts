@@ -1,6 +1,7 @@
-export interface SubscriptionType {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
+export type SubscriptionType = {
+    id: string;
+    price: number | null;
+    name: string;
+    description: string | null;
+    currency?: string;
 }
