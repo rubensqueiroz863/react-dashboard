@@ -11,6 +11,8 @@ const isPublicRoute = createRouteMatcher([
   '/terms(.*)',
   '/api/belvo/link(.*)',
   '/api/belvo/accounts(.*)',
+  'api/create-payment-intent(.*)',
+  '/api/webhooks/user(.*)',
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
