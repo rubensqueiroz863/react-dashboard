@@ -3,6 +3,7 @@
 
 import { stripe } from "@/lib/stripe";
 import { SubscriptionType } from "@/types/SubscriptionType";
+import { TransactionInput, TransactionResponse } from "@/types/TransactionTypes";
 
 export async function fetchSubscriptions(): Promise<{ subscriptions: SubscriptionType[] }> {
   const { data: products } = await stripe.products.list();
@@ -25,4 +26,35 @@ export async function fetchSubscriptions(): Promise<{ subscriptions: Subscriptio
   }
 
   return { subscriptions };
+}
+
+export async function addTransaction({
+  amount,
+  currency,
+  type,
+  status,
+  userId,
+}: TransactionInput): Promise<TransactionResponse | void> {
+  if (!amount || !currency || !type || !userId) {
+    console.error("Parâmetros obrigatórios ausentes");
+    return;
+  }
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/transactions/route`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ amount, currency, type, status, userId }),
+});
+
+
+
+
+  if (!res.ok) {
+    console.error("Erro ao criar transação");
+    return;
+  }
+
+  const data: TransactionResponse = await res.json();
+  console.log("Nova transação:", data);
+  return data;
 }
