@@ -3,10 +3,19 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const { amount, currency, type, status, userId } = await req.json();
+    const { amount, currency, type, status, userId: externalId } = await req.json();
 
-    if (!amount || !currency || !type || !userId) {
+    if (!amount || !currency || !type || !externalId) {
       return NextResponse.json({ error: "Campos obrigatórios ausentes" }, { status: 400 });
+    }
+
+    // Busca o usuário pelo externalId (Clerk)
+    const user = await prisma.user.findUnique({
+      where: { externalId },
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: "Usuário não encontrado" }, { status: 400 });
     }
 
     const transaction = await prisma.transaction.create({
@@ -15,7 +24,7 @@ export async function POST(req: Request) {
         currency,
         type,
         status: status || "pending",
-        userId,
+        userId: user.id, // usa o ID interno do Prisma
       },
     });
 
