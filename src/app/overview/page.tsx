@@ -2,10 +2,18 @@
 import { useState } from "react";
 import Link from "next/link";
 import NavBarHome from "../components/NavBarHome";
-import Transaction from "../components/Transation"; // modal
+import Transaction from "../components/AddTransation"; // modal
+import Transactions from "../components/Transactions";
+import { useUser } from "@clerk/nextjs";
 
 export default function OverviewPage() {
   const [menuType, setMenuType] = useState<"income" | "expense" | null>(null);
+  const { user, isLoaded } = useUser();
+
+  if (!isLoaded) return <div>Carregando...</div>;
+  if (!user) return <div>Usuário não encontrado</div>;
+
+  const userId = user.id;
 
   return (
     <div className="min-h-screen bg-neutral-300">
@@ -98,6 +106,9 @@ export default function OverviewPage() {
 
       {/* Modal */}
       {menuType && <Transaction type={menuType} onClose={() => setMenuType(null)} />}
+      <div>
+        <Transactions userId={userId}/>
+      </div>
     </div>
   );
 }

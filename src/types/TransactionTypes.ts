@@ -3,7 +3,7 @@ type TransactionInput = {
   currency: string;
   type: "income" | "expense";
   status: string;
-  userId: number;
+  userId: string;
 };
 
 type TransactionResponse = {
@@ -13,7 +13,7 @@ type TransactionResponse = {
   type: "income" | "expense";
   status: string;
   createdAt: string;
-  userId: number;
+  userId: string;
 };
 
 export type { TransactionInput, TransactionResponse };

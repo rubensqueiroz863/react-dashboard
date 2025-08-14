@@ -37,7 +37,7 @@ export async function POST(req: Request) {
 
     const existing_order = await prisma.order.findFirst({
       where: { paymentIntentID: payment_intent_id },
-      include: { product: true }
+      include: { products: true }
     });
 
     if (!existing_order) {
@@ -48,7 +48,7 @@ export async function POST(req: Request) {
       where: { paymentIntentID: payment_intent_id },
       data: {
         amount: totalPrice(item),
-        product: {
+        products: {
           deleteMany: {}, // apaga produto anterior
           create: {
             name: item.name,
@@ -76,7 +76,7 @@ export async function POST(req: Request) {
       status: 'pending',
       paymentIntentID: paymentIntent.id,
       amount: totalPrice(item),
-      product: {
+      products: {
         create: {
           name: item.name,
           description: item.description ?? "",

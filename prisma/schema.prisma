@@ -1,54 +1,52 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider  = "postgresql"
-  url  	    = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
-  id       Int      @id @default(autoincrement())
-  externalId String @unique
-  attributes Json  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id               String        @id @default(cuid()) // mudar para string para compatibilidade com Clerk
+  externalId       String        @unique
+  attributes       Json  
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
   stripeCustomerId String?
-  orders   Order[]
-  Transaction Transaction[]
+  orders           Order[]
+  transactions     Transaction[]
 }
 
 model Order {
-    id              String    @id @default(cuid())
-    user            User      @relation(fields: [userId], references: [id])
-    userId          Int
-    amount          Float
-    currency        String
-    status          String
-    createdDate     DateTime  @default(now())
-    paymentIntentID String?   @unique
-    product        Product[]
+  id              String    @id @default(cuid())
+  user            User      @relation(fields: [userId], references: [id])
+  userId          String    // id agora é string
+  amount          Float
+  currency        String
+  status          String
+  createdDate     DateTime  @default(now())
+  paymentIntentID String?   @unique
+  products        Product[]
 }
 
 model Product {
-    id          String  @id @default(cuid())
-    name        String
-    description String?
-    price Float
-    quantity    Float   @default(0)
-    order      Order[]
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  price       Float
+  image       String?
+  quantity    Float   @default(0)
+  orders      Order[]
 }
 
 model Transaction {
   id        String   @id @default(cuid())
   amount    Float
   currency  String
-  status    String
-  type      String   // "income" ou "expense"
+  type      String
+  status    String   @default("pending")
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   // id agora é string
   createdAt DateTime @default(now())
-  user      User?    @relation(fields: [userId], references: [id])
-  userId    Int?
 }

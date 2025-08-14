@@ -3,7 +3,8 @@
 
 import { stripe } from "@/lib/stripe";
 import { SubscriptionType } from "@/types/SubscriptionType";
-import { TransactionInput, TransactionResponse } from "@/types/TransactionTypes";
+import { prisma } from "@/lib/prisma";
+import { TransactionResponse } from "@/types/TransactionTypes";
 
 export async function fetchSubscriptions(): Promise<{ subscriptions: SubscriptionType[] }> {
   const { data: products } = await stripe.products.list();
@@ -28,33 +29,28 @@ export async function fetchSubscriptions(): Promise<{ subscriptions: Subscriptio
   return { subscriptions };
 }
 
-export async function addTransaction({
-  amount,
-  currency,
-  type,
-  status,
-  userId,
-}: TransactionInput): Promise<TransactionResponse | void> {
-  if (!amount || !currency || !type || !userId) {
-    console.error("Parâmetros obrigatórios ausentes");
-    return;
+export async function getTransactions(userId: string): Promise<TransactionResponse[]> {
+  if (!userId || typeof userId !== "string") {
+    throw new Error("ID do usuário é obrigatório e deve ser uma string");
   }
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/transactions/route`, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ amount, currency, type, status, userId }),
-});
+  try {
+    const transactions = await prisma.transaction.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+    });
 
-
-
-
-  if (!res.ok) {
-    console.error("Erro ao criar transação");
-    return;
+    return transactions.map((tx) => ({
+      id: tx.id,
+      amount: tx.amount,
+      currency: tx.currency,
+      type: tx.type === "income" ? "income" : "expense",
+      status: tx.status,
+      userId: tx.userId,
+      createdAt: tx.createdAt.toISOString(), // converter Date para string
+    }));
+  } catch (err) {
+    console.error("Erro ao buscar transações:", err);
+    return [];
   }
-
-  const data: TransactionResponse = await res.json();
-  console.log("Nova transação:", data);
-  return data;
 }
