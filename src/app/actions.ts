@@ -47,7 +47,8 @@ export async function getTransactions(userId: string): Promise<TransactionRespon
       type: tx.type === "income" ? "income" : "expense",
       status: tx.status,
       userId: tx.userId,
-      createdAt: tx.createdAt.toISOString(), // converter Date para string
+      createdAt: tx.createdAt.toISOString(),
+      name: tx.name ?? "", // converter Date para string
     }));
   } catch (err) {
     console.error("Erro ao buscar transações:", err);

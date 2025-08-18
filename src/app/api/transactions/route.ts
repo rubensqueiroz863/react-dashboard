@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const { amount, currency, type, status, userId: externalId } = await req.json();
+    const { name, amount, currency, type, status, userId: externalId } = await req.json();
 
     if (!amount || !currency || !type || !externalId) {
       return NextResponse.json({ error: "Campos obrigatórios ausentes" }, { status: 400 });
@@ -24,6 +24,7 @@ export async function POST(req: Request) {
 
     const transaction = await prisma.transaction.create({
       data: {
+        name,
         amount: parseFloat(amount),
         currency,
         type,

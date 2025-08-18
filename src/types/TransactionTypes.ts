@@ -1,4 +1,5 @@
 type TransactionInput = {
+  name: string;
   amount: number;
   currency: string;
   type: "income" | "expense";
@@ -8,6 +9,7 @@ type TransactionInput = {
 
 type TransactionResponse = {
   id: string;
+  name: string;
   amount: number;
   currency: string;
   type: "income" | "expense";

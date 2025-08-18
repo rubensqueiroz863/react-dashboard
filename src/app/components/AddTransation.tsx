@@ -11,9 +11,9 @@ type TransactionProps = {
 
 // Função para adicionar transação via API
 export async function addTransaction(input: TransactionInput): Promise<TransactionResponse | null> {
-  const { amount, currency, type, status, userId } = input;
+  const { name, amount, currency, type, status, userId } = input;
 
-  if (!amount || !currency || !type || !userId) {
+  if (!name || !amount || !currency || !type || !userId) {
     console.error("Parâmetros obrigatórios ausentes:", input);
     return null;
   }
@@ -22,7 +22,7 @@ export async function addTransaction(input: TransactionInput): Promise<Transacti
     const res = await fetch("/api/transactions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ amount, currency, type, status, userId }),
+      body: JSON.stringify({ name, amount, currency, type, status, userId }),
     });
 
     if (!res.ok) {
@@ -42,6 +42,7 @@ export async function addTransaction(input: TransactionInput): Promise<Transacti
 
 // Componente de modal
 export default function Transaction({ type, onClose }: TransactionProps) {
+  const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
   const [currency, setCurrency] = useState("BRL");
   const [status, setStatus] = useState("completed");
@@ -56,12 +57,17 @@ export default function Transaction({ type, onClose }: TransactionProps) {
     e.preventDefault();
 
     const parsedAmount = parseFloat(amount);
+    if (!name.trim()) {
+      alert("Digite um nome para a transação.");
+      return;
+    }
     if (isNaN(parsedAmount) || parsedAmount <= 0) {
       alert("Insira um valor válido.");
       return;
     }
 
     const result = await addTransaction({
+      name,
       amount: parsedAmount,
       currency,
       type,
@@ -81,13 +87,21 @@ export default function Transaction({ type, onClose }: TransactionProps) {
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
+            type="text"
+            placeholder="Nome da transação"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="border border-gray-300 rounded px-3 py-2"
+          />
+          
+          <input
             type="number"
             placeholder="Valor"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             className="border border-gray-300 rounded px-3 py-2"
           />
-
+          
           <select
             value={currency}
             onChange={(e) => setCurrency(e.target.value)}

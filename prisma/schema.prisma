@@ -42,6 +42,7 @@ model Product {
 
 model Transaction {
   id        String   @id @default(cuid())
+  name      String?
   amount    Float
   currency  String
   type      String
