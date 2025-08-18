@@ -14,6 +14,7 @@ export default function OverviewPage() {
   if (!user) return <div>Usuário não encontrado</div>;
 
   const userId = user.id;
+  console.log("User ID:", userId);
 
   return (
     <div className="min-h-screen bg-neutral-300">
@@ -102,13 +103,11 @@ export default function OverviewPage() {
             </Link>
           </div>
         </div>
+        <div>
+          <Transactions userId={userId} />
+        </div>
       </div>
-
-      {/* Modal */}
       {menuType && <Transaction type={menuType} onClose={() => setMenuType(null)} />}
-      <div>
-        <Transactions userId={userId}/>
-      </div>
     </div>
   );
 }

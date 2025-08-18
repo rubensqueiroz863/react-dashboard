@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
+
+
 export async function POST(req: Request) {
   try {
     const { amount, currency, type, status, userId: externalId } = await req.json();
@@ -18,13 +20,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Usuário não encontrado" }, { status: 400 });
     }
 
+    console.log("Criando transação para o usuário:", user.id);
+
     const transaction = await prisma.transaction.create({
       data: {
         amount: parseFloat(amount),
         currency,
         type,
         status: status || "pending",
-        userId: user.id, // usa o ID interno do Prisma
+        userId: externalId, // usa o ID interno do Prisma
       },
     });
 
