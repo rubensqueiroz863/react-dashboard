@@ -55,3 +55,34 @@ export async function getTransactions(userId: string): Promise<TransactionRespon
     return [];
   }
 }
+
+export async function getTransactionsTotal(userId: string, type: string) {
+  if (!userId || typeof userId !== "string" || (!type || typeof type !== "string")) {
+    throw new Error("Erro ID do usuário e tipo de transação são obrigatórios e devem ser strings");
+  }
+  if (type === "income") {
+    try {
+      const transactions = await prisma.transaction.findMany({
+        where: { userId, type: "income" },
+      });
+
+      const total = transactions.reduce((sum, tx) => sum + (tx.amount || 0), 0);
+      return total;
+    } catch (err) {
+      console.error("Erro ao buscar transações:", err);
+      return 0;
+    }
+  } else if (type === "expense") {
+    try {
+      const transactions = await prisma.transaction.findMany({
+        where: { userId, type: "expense" },
+      });
+      const total = transactions.reduce((sum, tx) => sum + (tx.amount || 0), 0);
+      return total;
+    } catch (err) {
+      console.error("Erro ao buscar transações:", err);
+      return 0;
+    }
+  }
+  return 0;
+}
