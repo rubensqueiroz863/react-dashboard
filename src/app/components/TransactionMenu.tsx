@@ -26,52 +26,52 @@ export default function TransactionsMenu() {
                 </div>
                 <div className="flex flex-wrap gap-6 items-center justify-center">
                     {/* Botão de Despesa */}
-                    <div className="relative group border p-2 rounded-md hover:bg-neutral-100 border-neutral-200">
-                    <button onClick={() => setMenuType("expense")} className="cursor-pointer m-1">
+                    <button
+                        className="relative group border p-2 rounded-md cursor-pointer hover:bg-neutral-100 border-neutral-200"
+                        onClick={() => setMenuType("expense")}>
                         <img
                         src="https://i.postimg.cc/7hjfMpkW/images.png"
                         alt="Add expense icon"
                         className="w-8 h-8 mx-auto"
                         />
+                        <span className="absolute border mt-2 w-30 top-full mb-2 hidden group-hover:block bg-white text-xs px-2 py-1 rounded">
+                            Adicionar Despesa
+                        </span>
                     </button>
-                    <span className="absolute border mt-2 w-30 top-full mb-2 hidden group-hover:block bg-white text-xs px-2 py-1 rounded">
-                        Adicionar Despesa
-                    </span>
-                    </div>
+                    
 
                     {/* Botão de Receita */}
-                    <div className="relative group border p-2 rounded-md hover:bg-neutral-100 border-neutral-200">
-                    <button onClick={() => setMenuType("income")} className="cursor-pointer m-1">
+                    <button
+                        className="relative group border p-2 cursor-pointer rounded-md hover:bg-neutral-100 border-neutral-200"
+                     onClick={() => setMenuType("income")}>
                         <img
                         src="https://i.postimg.cc/nrXXmn6m/images-1.png"
                         alt="Add revenue icon"
                         className="w-8 h-8 mx-auto"
                         />
+                        <span className="absolute border mt-2 w-30 top-full mb-2 hidden group-hover:block bg-white text-xs px-2 py-1 rounded">
+                            Adicionar Receita
+                        </span>
                     </button>
-                    <span className="absolute border mt-2 w-30 top-full mb-2 hidden group-hover:block bg-white text-xs px-2 py-1 rounded">
-                        Adicionar Receita
-                    </span>
-                    </div>
+                    
 
                     {/* Botão de Relatórios */}
                     <Link href="/reports">
-                    <div className="relative group border p-2 rounded-md hover:bg-neutral-100 border-neutral-200">
-                        <button className="cursor-pointer m-1">
-                        <img
-                            src="https://i.postimg.cc/mrTWq8Zp/383f43305de4fbc3c6a3bdfb25a1b758-icone-de-grafico-de-marketing.webp"
-                            alt="Graphic image"
-                            className="w-8 h-8 mx-auto"
-                        />
+                        <button className="cursor-pointer relative group border p-2 rounded-md hover:bg-neutral-100 border-neutral-200">
+                            <img
+                                src="https://i.postimg.cc/mrTWq8Zp/383f43305de4fbc3c6a3bdfb25a1b758-icone-de-grafico-de-marketing.webp"
+                                alt="Graphic image"
+                                className="w-8 h-8 mx-auto"
+                            />
+                            <span className="absolute border mt-2 w-30 top-full mb-2 hidden group-hover:block bg-white text-xs px-2 py-1 rounded">
+                                Ver Relatórios
+                            </span>
                         </button>
-                        <span className="absolute border mt-2 w-30 top-full mb-2 hidden group-hover:block bg-white text-xs px-2 py-1 rounded">
-                        Ver Relatórios
-                        </span>
-                    </div>
                     </Link>
                 </div>
                 </div>
-                <div>
-                <Transactions userId={userId} />
+                <div className="flex md:flex-col xl:flex-row items-center mt-6">
+                    <Transactions userId={userId} />
                 </div>
                 {menuType && <Transaction type={menuType as "income" | "expense"} onClose={() => setMenuType(null)} />}
             </div>

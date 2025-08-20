@@ -13,35 +13,43 @@ export default async function OverviewPage() {
 
   const userId = user.id;
 
+  const totalIncome = await getTransactionsTotal(userId, "income");
+  const totalExpense = await getTransactionsTotal(userId, "expense");
+
   return (
-    <div className="min-h-screen bg-neutral-300">
+    <div className="min-h-screen bg-neutral-100">
       <NavBarHome />
 
-      <div className="flex flex-col xl:flex-row xl:items-start items-center w-full rounded-xl bg-white text-center p-5 gap-5">
+      <div className="flex flex-col xl:flex-row xl:items-start items-center w-full p-6 gap-6">
+        {/* Painel de boas-vindas e resumo financeiro */}
+        <div className="w-full xl:w-1/2 bg-white rounded-2xl shadow-md p-6 flex flex-col gap-6">
+          <h1 className="text-2xl font-bold text-gray-800 text-center xl:text-left">
+            Olá, {user.firstName}!
+          </h1>
+
+          <div className="flex flex-col md:flex-row justify-around items-center gap-4">
+            {/* Receita */}
+            <div className="flex flex-col items-center bg-green-50 border border-green-200 rounded-2xl p-5 w-full md:w-1/2 shadow-sm hover:shadow-md transition">
+              <p className="text-md text-gray-700">Receitas no mês</p>
+              <p className="text-xl font-semibold text-green-600 mt-2">
+                {formatTransactions(totalIncome)}
+              </p>
+            </div>
+
+            {/* Despesa */}
+            <div className="flex flex-col items-center bg-red-50 border border-red-200 rounded-2xl p-5 w-full md:w-1/2 shadow-sm hover:shadow-md transition">
+              <p className="text-md text-gray-700">Despesas no mês</p>
+              <p className="text-xl font-semibold text-red-600 mt-2">
+                {formatTransactions(totalExpense)}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Menu de transações */}
         <div className="w-full xl:w-1/2">
-          <div className="mb-6 mt-6 font-bold text-2xl">
-            <p>Seja bem vindo, {user.firstName}!</p>
-          </div>
-
-          <div className="flex justify-between items-center my-4 flex-wrap">
-            <div className="flex flex-col items-center flex-1 min-w-[140px]">
-              <p className="text-md">Receitas no mês atual</p>
-              <p>{formatTransactions(await getTransactionsTotal(userId, "income"))}</p>
-            </div>
-            <div className="w-px h-10 bg-neutral-200 hidden md:block"></div>
-            <div className="flex flex-col items-center flex-1 min-w-[140px]">
-              <p className="text-md">Despesas no mês atual</p>
-              <p>{formatTransactions(await getTransactionsTotal(userId, "expense"))}</p>
-            </div>
-          </div>
+          <TransactionsMenu />
         </div>
-
-        <div className="flex items-center md:w-fit sm:w-fit">
-          <div
-            className="xl:w-px xl:h-40 md:h-px md:w-40 sm:h-px sm:w-40 bg-neutral-200"
-          />
-        </div>
-        <TransactionsMenu />
       </div>
     </div>
   );

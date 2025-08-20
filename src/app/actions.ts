@@ -115,3 +115,19 @@ export async function getOneTransaction(transactionId: string): Promise<Transact
     return null;
   }
 }
+
+export async function deleteTransaction(transactionId: string): Promise<boolean> {
+  if (!transactionId || typeof transactionId !== "string") {
+    throw new Error("ID da transação é obrigatório e deve ser uma string");
+  }
+  try {
+    const deletedTransaction = await prisma.transaction.delete({
+      where: { id: transactionId },
+    });
+
+    return !!deletedTransaction;
+  } catch (err) {
+    console.error("Erro ao excluir transação:", err);
+    return false;
+  }
+}

@@ -45,7 +45,7 @@ export default function Transaction({ type, onClose }: TransactionProps) {
   const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
   const [currency, setCurrency] = useState("BRL");
-  const [status, setStatus] = useState("completed");
+  const [status] = useState("completed");
   const { user, isLoaded } = useUser();
 
   if (!isLoaded) return <div>Carregando...</div>;
@@ -56,27 +56,44 @@ export default function Transaction({ type, onClose }: TransactionProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    const parsedAmount = parseFloat(amount);
-    if (!name.trim()) {
-      alert("Digite um nome para a transação.");
-      return;
-    }
-    if (isNaN(parsedAmount) || parsedAmount <= 0) {
-      alert("Insira um valor válido.");
-      return;
-    }
+    const numericAmount = parseInt(amount.replace(/\D/g, ""), 10) / 100;
 
     const result = await addTransaction({
       name,
-      amount: parsedAmount,
+      amount: numericAmount,
       currency,
       type,
       status,
       userId,
     });
 
-    if (result) onClose(); // fecha modal só se a transação for criada
+    if (result) {
+      onClose(); // fecha modal só se a transação for criada
+      window.location.reload();
+    } 
   }
+
+  // Dentro do seu componente Transaction
+  const formatCurrency = (value: string) => {
+    // Remove tudo que não seja número
+    const numericValue = value.replace(/\D/g, "");
+
+    // Converte para centavos e formata
+    const number = parseInt(numericValue || "0", 10);
+    const formatted = (number / 100).toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
+
+    return formatted;
+  };
+
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawValue = e.target.value;
+    const formatted = formatCurrency(rawValue);
+    setAmount(formatted);
+  };
+
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
@@ -95,10 +112,10 @@ export default function Transaction({ type, onClose }: TransactionProps) {
           />
           
           <input
-            type="number"
+            type="text"
             placeholder="Valor"
             value={amount}
-            onChange={(e) => setAmount(e.target.value)}
+            onChange={handleAmountChange}
             className="border border-gray-300 rounded px-3 py-2"
           />
           

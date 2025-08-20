@@ -1,7 +1,8 @@
 import { getOneTransaction } from "@/app/actions";
+import DeleteButton from "@/app/components/DeleteButton";
 import NavBarHome from "@/app/components/NavBarHome";
 
-export default async function transactionPage({
+export default async function TransactionPage({
   params,
 }: {
   params: Promise<{ id: string }>;
@@ -10,11 +11,15 @@ export default async function transactionPage({
   const transaction = await getOneTransaction(id);
 
   if (!transaction) {
-    return <div>Transação não encontrada.</div>;
+    return (
+      <div>
+        <NavBarHome />
+        <div className="p-10 text-center text-gray-600 font-semibold">
+          Transação não encontrada.
+        </div>
+      </div>
+    );
   }
-
-  console.log("transactions:", transaction);
-  console.log("transaction ID:", id);
 
   const formattedAmount = new Intl.NumberFormat("pt-BR", {
     style: "currency",
@@ -31,39 +36,53 @@ export default async function transactionPage({
   return (
     <div>
       <NavBarHome />
-      <div className="p-10 flex items-center justify-center cursor-pointer">
+      <div className="p-10 flex items-center justify-center">
         <div
           key={transaction.id}
-          className="rounded-2xl h-96 w-full m-auto border border-gray-200 bg-white p-4 shadow-sm hover:shadow-md transition"
+          className="rounded-2xl h-96 w-full max-w-xl m-auto border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition flex flex-col justify-between"
         >
-          <div className="flex justify-between items-center">
-            <h2 className="text-lg font-semibold text-gray-800">
-              {transaction.name || "Sem nome"}
-            </h2>
-            <span
-              className={`px-3 py-1 rounded-full text-sm font-medium ${
-                transaction.status === "completed"
-                  ? "bg-green-100 text-green-700"
+          <div>
+            <div className="flex justify-between items-center">
+              <h2 className="text-lg font-semibold text-gray-800">
+                {transaction.name || "Sem nome"}
+              </h2>
+              <span
+                className={`px-3 py-1 rounded-full text-sm font-medium ${
+                  transaction.status === "completed"
+                    ? "bg-green-100 text-green-700"
+                    : transaction.status === "pending"
+                    ? "bg-yellow-100 text-yellow-700"
+                    : "bg-red-100 text-red-700"
+                }`}
+              >
+                {transaction.status === "completed"
+                  ? "Concluída"
                   : transaction.status === "pending"
-                  ? "bg-yellow-100 text-yellow-700"
-                  : "bg-red-100 text-red-700"
-              }`}
-            >
-              {transaction.status}
-            </span>
+                  ? "Pendente"
+                  : "Cancelada"}
+              </span>
+            </div>
+
+            <p className={`mt-2 text-gray-600 ${typeColor}`}>
+              {transaction.type === "income"
+                ? "Receita"
+                : transaction.type === "expense"
+                ? "Despesa"
+                : ""}{" "}
+              — <span className="font-medium">{formattedAmount}</span>
+            </p>
+
+            <p className="mt-1 text-sm text-gray-500">
+              {new Date(transaction.createdAt).toLocaleString("pt-BR")}
+            </p>
           </div>
 
-          <p className={`mt-2 text-gray-600 ${typeColor}`}>
-            {transaction.type.toUpperCase()} —{" "}
-            <span className="font-medium">{formattedAmount}</span>
-          </p>
-
-          <p className="mt-1 text-sm text-gray-500">
-            {new Date(transaction.createdAt).toLocaleString("pt-BR")}
-          </p>
+          {/* Botão de exclusão */}
+          <div className="mt-4 flex justify-end">
+            <DeleteButton transactionId={transaction.id} />
+          </div>
         </div>
       </div>
     </div>
-    
   );
 }
