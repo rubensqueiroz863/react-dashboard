@@ -1,4 +1,4 @@
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { currentUser } from "@clerk/nextjs/server";
 import NavBarHome from "../components/NavBarHome";
 import TransactionsMenu from "../components/TransactionMenu";
 import { getTransactionsTotal } from "../actions";
@@ -41,7 +41,6 @@ export default async function OverviewPage() {
             className="xl:w-px xl:h-40 md:h-px md:w-40 sm:h-px sm:w-40 bg-neutral-200"
           />
         </div>
-
         <TransactionsMenu />
       </div>
     </div>

@@ -1,20 +1,20 @@
 type TransactionInput = {
-  name: string;
+  name: string | null;
   amount: number;
   currency: string;
-  type: "income" | "expense";
+  type: string;
   status: string;
   userId: string;
 };
 
 type TransactionResponse = {
   id: string;
-  name: string;
+  name: string | null;
   amount: number;
   currency: string;
-  type: "income" | "expense";
+  type: string;
   status: string;
-  createdAt: string;
+  createdAt: Date | string;
   userId: string;
 };
 

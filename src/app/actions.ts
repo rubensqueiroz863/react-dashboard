@@ -5,6 +5,7 @@ import { stripe } from "@/lib/stripe";
 import { SubscriptionType } from "@/types/SubscriptionType";
 import { prisma } from "@/lib/prisma";
 import { TransactionResponse } from "@/types/TransactionTypes";
+import { object } from "framer-motion/client";
 
 export async function fetchSubscriptions(): Promise<{ subscriptions: SubscriptionType[] }> {
   const { data: products } = await stripe.products.list();
@@ -85,4 +86,32 @@ export async function getTransactionsTotal(userId: string, type: string) {
     }
   }
   return 0;
+}
+
+export async function getOneTransaction(transactionId: string): Promise<TransactionResponse | null> {
+  if (!transactionId || typeof transactionId !== "string") {
+    throw new Error("ID da transação é obrigatório e deve ser uma string");
+  }
+
+  try {
+    const transaction = await prisma.transaction.findUnique({
+      where: { id: transactionId },
+    });
+
+    return transaction
+      ? {
+          id: transaction.id,
+          name: transaction.name ?? null,
+          amount: transaction.amount,
+          currency: transaction.currency,
+          type: transaction.type,
+          status: transaction.status,
+          createdAt: transaction.createdAt.toISOString(),
+          userId: transaction.userId,
+        }
+      : null;
+  } catch (err) {
+    console.error("Erro ao buscar transação:", err);
+    return null;
+  }
 }
