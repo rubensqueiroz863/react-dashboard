@@ -1,5 +1,6 @@
 import { getOneTransaction } from "@/app/actions";
 import DeleteButton from "@/app/components/DeleteButton";
+import EditButton from "@/app/components/EditButton";
 import NavBarHome from "@/app/components/NavBarHome";
 
 export default async function TransactionPage({
@@ -78,7 +79,8 @@ export default async function TransactionPage({
           </div>
 
           {/* Botão de exclusão */}
-          <div className="mt-4 flex justify-end">
+          <div className="mt-4 gap-2 flex justify-end">
+            <EditButton transactionId={transaction.id} />
             <DeleteButton transactionId={transaction.id} />
           </div>
         </div>

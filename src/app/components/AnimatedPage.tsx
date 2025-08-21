@@ -9,7 +9,7 @@ type Props = {
 
 export default function AnimatedHome({ userId }: Props) {
   return (
-    <section className="flex mb-45 flex-col w-full items-center justify-center">
+    <section className="flex mb-20 flex-col w-full items-center justify-center">
 
       {/* Títulos */}
       <motion.div

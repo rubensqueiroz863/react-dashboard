@@ -12,6 +12,7 @@ export default async function SubscriptionPage() {
   return (
     <div>
       <Header/>
+      <div className="w-full h-0.5 bg-neutral-400 mx-5 xl:mb-0 md:mb-10"></div>
       <div className="min-h-screen w-full flex flex-col items-center justify-center px-4 py-4">
         <div className="flex flex-wrap justify-center gap-6 w-full items-stretch">
           {ordered.map((sub, index) => (

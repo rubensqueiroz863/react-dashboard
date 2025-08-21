@@ -4,7 +4,7 @@
 import { stripe } from "@/lib/stripe";
 import { SubscriptionType } from "@/types/SubscriptionType";
 import { prisma } from "@/lib/prisma";
-import { TransactionResponse } from "@/types/TransactionTypes";
+import { TransactionInput, TransactionResponse } from "@/types/TransactionTypes";
 import { object } from "framer-motion/client";
 
 export async function fetchSubscriptions(): Promise<{ subscriptions: SubscriptionType[] }> {
@@ -88,7 +88,7 @@ export async function getTransactionsTotal(userId: string, type: string) {
   return 0;
 }
 
-export async function getOneTransaction(transactionId: string): Promise<TransactionResponse | null> {
+export async function getOneTransaction(transactionId: string): Promise<TransactionResponse> {
   if (!transactionId || typeof transactionId !== "string") {
     throw new Error("ID da transação é obrigatório e deve ser uma string");
   }
@@ -98,23 +98,26 @@ export async function getOneTransaction(transactionId: string): Promise<Transact
       where: { id: transactionId },
     });
 
-    return transaction
-      ? {
-          id: transaction.id,
-          name: transaction.name ?? null,
-          amount: transaction.amount,
-          currency: transaction.currency,
-          type: transaction.type,
-          status: transaction.status,
-          createdAt: transaction.createdAt.toISOString(),
-          userId: transaction.userId,
-        }
-      : null;
+    if (!transaction) {
+      throw new Error("Transação não encontrada");
+    }
+
+    return {
+      id: transaction.id,
+      name: transaction.name ?? null,
+      amount: transaction.amount,
+      currency: transaction.currency,
+      type: transaction.type,
+      status: transaction.status,
+      createdAt: transaction.createdAt.toISOString(),
+      userId: transaction.userId,
+    };
   } catch (err) {
     console.error("Erro ao buscar transação:", err);
-    return null;
+    throw err; // propaga o erro em vez de retornar null
   }
 }
+
 
 export async function deleteTransaction(transactionId: string): Promise<boolean> {
   if (!transactionId || typeof transactionId !== "string") {
@@ -128,6 +131,23 @@ export async function deleteTransaction(transactionId: string): Promise<boolean>
     return !!deletedTransaction;
   } catch (err) {
     console.error("Erro ao excluir transação:", err);
+    return false;
+  }
+}
+
+export async function editTransaction(transactionId: string, transaction: TransactionInput) {
+  if (!transactionId || typeof transactionId !== "string") {
+    throw new Error("ID da transação é obrigatório e deve ser uma string");
+  }
+  try {
+    const updateTransaction = await prisma.transaction.update({
+      where: { id: transactionId },
+      data: transaction,
+    })
+    return true;
+    console.log("Sucesso!");
+  } catch (err) {
+    console.error("Erro ao editar transação: ", err);
     return false;
   }
 }
