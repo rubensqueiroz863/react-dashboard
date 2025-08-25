@@ -131,14 +131,14 @@ export default function Transaction({ type, onClose }: TransactionProps) {
           <div className="flex gap-2">
             <button
               type="submit"
-              className="bg-blue-500 text-white rounded px-4 py-2 hover:bg-blue-600 flex-1"
+              className="bg-blue-500 cursor-pointer text-white rounded px-4 py-2 hover:bg-blue-600 flex-1"
             >
               Salvar
             </button>
             <button
               type="button"
               onClick={onClose}
-              className="bg-gray-300 text-black rounded px-4 py-2 hover:bg-gray-400 flex-1"
+              className="bg-gray-300 cursor-pointer text-black rounded px-4 py-2 hover:bg-gray-400 flex-1"
             >
               Cancelar
             </button>

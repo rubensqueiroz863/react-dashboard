@@ -1,23 +1,45 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
-import { useState } from "react";
-import { addTransaction } from "./AddTransation";
+import { useEffect, useState } from "react";
 import { editTransaction } from "../actions";
 
 type TransactionProps = {
   transactionId: string;
+  transactionName: string;
+  transactionPrice: string; // vem no formato "234445" (centavos)
   type: "income" | "expense";
   onClose: () => void;
 };
 
-// Componente de modal
-export default function EditMenu({ type, onClose, transactionId }: TransactionProps) {
+export default function EditMenu({ 
+  type, 
+  onClose, 
+  transactionId , 
+  transactionName, 
+  transactionPrice 
+}: TransactionProps) {
   const [name, setName] = useState("");
-  const [amount, setAmount] = useState("");
+  const [amount, setAmount] = useState(""); // valor formatado para exibir no input
   const [currency, setCurrency] = useState("BRL");
   const [status] = useState("completed");
   const { user, isLoaded } = useUser();
+
+  const price = (parseFloat(transactionPrice)*100).toString();
+
+  // Inicializa os valores quando o modal abre
+  useEffect(() => {
+    setName(transactionName);
+
+    // Converte string "234445" (centavos) para número
+    const number = parseInt(price || "0", 10);
+    // Divide por 100 e formata em moeda
+    const formatted = (number / 100).toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
+    setAmount(formatted);
+  }, [transactionName, price]);
 
   if (!isLoaded) return <div>Carregando...</div>;
   if (!user) return <div>Usuário não encontrado</div>;
@@ -27,6 +49,7 @@ export default function EditMenu({ type, onClose, transactionId }: TransactionPr
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
+    // Transforma o valor formatado do input em número
     const numericAmount = parseInt(amount.replace(/\D/g, ""), 10) / 100;
 
     const result = await editTransaction(transactionId, {
@@ -39,38 +62,31 @@ export default function EditMenu({ type, onClose, transactionId }: TransactionPr
     });
 
     if (result) {
-      onClose(); // fecha modal só se a transação for criada
+      onClose();
       window.location.reload();
-    } 
+    }
   }
 
-  // Dentro do seu componente Transaction
+  // Função que formata o valor digitado enquanto o usuário edita
   const formatCurrency = (value: string) => {
-    // Remove tudo que não seja número
     const numericValue = value.replace(/\D/g, "");
-
-    // Converte para centavos e formata
     const number = parseInt(numericValue || "0", 10);
-    const formatted = (number / 100).toLocaleString("pt-BR", {
+    return (number / 100).toLocaleString("pt-BR", {
       style: "currency",
       currency: "BRL",
     });
-
-    return formatted;
   };
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value;
-    const formatted = formatCurrency(rawValue);
-    setAmount(formatted);
+    setAmount(formatCurrency(rawValue));
   };
-
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-lg p-6 w-[90%] max-w-md">
         <h2 className="text-xl font-bold mb-4">
-          {type === "income" ? "Adicionar Receita" : "Adicionar Despesa"}
+          {type === "income" ? "Editar Receita" : "Editar Despesa"}
         </h2>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -102,14 +118,14 @@ export default function EditMenu({ type, onClose, transactionId }: TransactionPr
           <div className="flex gap-2">
             <button
               type="submit"
-              className="bg-blue-500 text-white rounded px-4 py-2 hover:bg-blue-600 flex-1"
+              className="bg-blue-500 cursor-pointer text-white rounded px-4 py-2 hover:bg-blue-600 flex-1"
             >
               Salvar
             </button>
             <button
               type="button"
               onClick={onClose}
-              className="bg-gray-300 text-black rounded px-4 py-2 hover:bg-gray-400 flex-1"
+              className="bg-gray-300 cursor-pointer text-black rounded px-4 py-2 hover:bg-gray-400 flex-1"
             >
               Cancelar
             </button>

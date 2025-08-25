@@ -41,6 +41,8 @@ export default function EditButton({ transactionId }: DeleteButtonProps) {
             type={transaction.type as "income" | "expense"}
             onClose={() => setShowEditMenu(false)}
             transactionId={transactionId}
+            transactionName={transaction.name!}
+            transactionPrice={transaction.amount.toString()}
         />
       )}
     </div>

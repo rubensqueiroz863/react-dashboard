@@ -20,7 +20,7 @@ export default function TransactionsMenu() {
     return (
         <div>
             {/* Bloco de Acesso Rápido */}
-            <div className="w-full xl:w-1/2">
+            <div className="w-full xl:w-1/2 bg-white p-6 rounded-xl shadow-md">
                 <div className="mb-6 mt-6 font-bold text-2xl">
                     <p>Acesso rápido</p>
                 </div>
@@ -70,8 +70,11 @@ export default function TransactionsMenu() {
                     </Link>
                 </div>
                 </div>
-                <div className="flex md:flex-col xl:flex-row items-center mt-6">
-                    <Transactions userId={userId} />
+                <div className="flex md:flex-col shadow-md bg-white rounded-xl xl:flex-row items-center mt-6">
+                    <div className="mb-6 mt-6 font-bold text-2xl">
+                        <p>Transações mais recentes</p>
+                    </div>
+                    <Transactions userId={userId} limit={3} />
                 </div>
                 {menuType && <Transaction type={menuType as "income" | "expense"} onClose={() => setMenuType(null)} />}
             </div>

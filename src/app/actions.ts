@@ -30,7 +30,7 @@ export async function fetchSubscriptions(): Promise<{ subscriptions: Subscriptio
   return { subscriptions };
 }
 
-export async function getTransactions(userId: string): Promise<TransactionResponse[]> {
+export async function getTransactions(userId: string, limit: number): Promise<TransactionResponse[]> {
   if (!userId || typeof userId !== "string") {
     throw new Error("ID do usuário é obrigatório e deve ser uma string");
   }
@@ -39,6 +39,7 @@ export async function getTransactions(userId: string): Promise<TransactionRespon
     const transactions = await prisma.transaction.findMany({
       where: { userId },
       orderBy: { createdAt: "desc" },
+      take: limit,
     });
 
     return transactions.map((tx) => ({
@@ -56,6 +57,40 @@ export async function getTransactions(userId: string): Promise<TransactionRespon
     return [];
   }
 }
+
+export async function getTransactionsScroll(
+  userId: string,
+  limit: number,
+  skip = 0 // <-- adiciona parâmetro
+): Promise<TransactionResponse[]> {
+  if (!userId || typeof userId !== "string") {
+    throw new Error("ID do usuário é obrigatório e deve ser uma string");
+  }
+
+  try {
+    const transactions = await prisma.transaction.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      skip,   // pula registros já carregados
+      take: limit,
+    });
+
+    return transactions.map((tx) => ({
+      id: tx.id,
+      amount: tx.amount,
+      currency: tx.currency,
+      type: tx.type === "income" ? "income" : "expense",
+      status: tx.status,
+      userId: tx.userId,
+      createdAt: tx.createdAt.toISOString(),
+      name: tx.name ?? "",
+    }));
+  } catch (err) {
+    console.error("Erro ao buscar transações:", err);
+    return [];
+  }
+}
+
 
 export async function getTransactionsTotal(userId: string, type: string) {
   if (!userId || typeof userId !== "string" || (!type || typeof type !== "string")) {
