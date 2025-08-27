@@ -5,6 +5,7 @@ import { stripe } from "@/lib/stripe";
 import { SubscriptionType } from "@/types/SubscriptionType";
 import { prisma } from "@/lib/prisma";
 import { TransactionInput, TransactionResponse } from "@/types/TransactionTypes";
+
 export async function fetchSubscriptions(): Promise<{ subscriptions: SubscriptionType[] }> {
   const { data: products } = await stripe.products.list();
 
@@ -48,6 +49,45 @@ export async function fetchSubscriptionById(productId: string): Promise<Subscrip
   } catch (error) {
     console.error("Erro ao buscar assinatura:", error);
     return null;
+  }
+}
+
+export async function completePayment(payment_intent_id: string) {
+  if (!payment_intent_id || typeof payment_intent_id !== "string") {
+    throw new Error("ID da transação é obrigatório e deve ser uma string");
+  }
+  try {
+    const updatePaymentIntent = await prisma.order.update({
+      where: { paymentIntentID: payment_intent_id },
+      data: { status: "completed"},
+    })
+    return true;
+    console.log("Sucesso!");
+  } catch (err) {
+    console.error("Erro ao editar transação: ", err);
+    return false;
+  }
+}
+
+export async function existsOrder(productId: string) {
+  if (!productId || typeof productId !== "string") {
+    throw new Error("ID do produto é obrigatório e deve ser uma string");
+  }
+
+  try {
+    const order = await prisma.order.findFirst({
+      where: {
+        products: {
+          some: { id: productId }, // procura orders que tenham pelo menos esse produto
+        },
+        status: "completed",
+      },
+    });
+
+    return !!order; // true se encontrou, false se não
+  } catch (err) {
+    console.error("Erro ao buscar order:", err);
+    return false;
   }
 }
 

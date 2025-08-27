@@ -5,6 +5,7 @@ import { Elements } from "@stripe/react-stripe-js";
 import { useCartStore } from "@/store";
 import { useEffect, useState } from "react";
 import CheckoutForm from "./CheckoutForm";
+import { completePayment } from "../actions";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -55,14 +56,13 @@ export default function Checkout({ onFinish }: CheckoutProps) {
         setLoading(false);
       }
     };
-
     createPaymentIntent();
+
   }, [item, cartStore.paymentIntent?.id]);
 
   if (loading) return <div>Carregando...</div>;
   if (error) return <div className="text-red-500">Erro: {error}</div>;
   if (!clientSecret) return <div>Pagamento não disponível</div>;
-
   const options: StripeElementsOptions = {
     clientSecret,
     appearance: { theme: 'night', labels: 'floating' }
@@ -70,7 +70,16 @@ export default function Checkout({ onFinish }: CheckoutProps) {
 
   return (
     <Elements options={options} stripe={stripePromise}>
-      <CheckoutForm clientSecret={clientSecret} onSuccess={onFinish} />
+      <CheckoutForm 
+        clientSecret={clientSecret} 
+        onSuccess={async () => {
+          if (cartStore.paymentIntent?.id) {
+            await completePayment(cartStore.paymentIntent.id);
+          }
+          window.location.reload(); // recarrega a página
+          onFinish(); // se quiser disparar algo extra passado como prop
+        }} 
+      />
     </Elements>
   );
 }

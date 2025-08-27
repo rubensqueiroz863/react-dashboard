@@ -1,4 +1,3 @@
-// CheckoutButton.tsx
 'use client'
 
 import { formatPrice } from "@/lib/utils";
@@ -6,8 +5,9 @@ import { useCartStore } from "@/store";
 import { SubscriptionType } from "@/types/SubscriptionType";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Checkout from "./Checkout";
+import { existsOrder } from "../actions";
 
 type CheckoutButtonProps = {
   item: SubscriptionType;
@@ -15,9 +15,19 @@ type CheckoutButtonProps = {
 
 export default function CheckoutButton({ item }: CheckoutButtonProps) {
   const [showCheckout, setShowCheckout] = useState(false);
+  const [available, setAvailable] = useState<boolean | null>(null);
   const router = useRouter();
   const { user } = useUser();
   const cartStore = useCartStore();
+
+  useEffect(() => {
+    const checkOrder = async () => {
+      if (!user) return;
+      const result = await existsOrder(item.id);
+      setAvailable(!result); // se existe order completa, desativa botão
+    };
+    checkOrder();
+  }, [item.id, user]);
 
   const handleCheckout = () => {
     if (!user) {
@@ -26,16 +36,18 @@ export default function CheckoutButton({ item }: CheckoutButtonProps) {
       return;
     }
 
-    cartStore.setItem(item); // adiciona o item ao store
+    cartStore.setItem(item);
     cartStore.setCheckout('checkout');
     setShowCheckout(true);
   }
 
   const handleFinish = () => {
-    // chama ao finalizar pagamento
-    cartStore.clearCart(); // limpa cart e paymentIntent
-    setShowCheckout(false); // esconde checkout
+    cartStore.clearCart();
+    setShowCheckout(false);
+    setAvailable(false); // marca como adquirido após a compra
   }
+
+  if (available === null) return <button disabled className="w-full rounded-md mb-10 bg-gray-400 py-2">Carregando...</button>;
 
   return (
     <div className="w-full">
@@ -44,9 +56,10 @@ export default function CheckoutButton({ item }: CheckoutButtonProps) {
       </p>
       <button 
         onClick={handleCheckout}
-        className='w-full rounded-md mb-10 bg-neutral-600 text-white py-2'
+        disabled={!available}
+        className={`w-full rounded-md mb-10 py-2 text-white ${available ? 'bg-neutral-600' : 'bg-gray-400'}`}
       >
-        Finalizar Compra
+        {available ? "Finalizar Compra" : "Plano já adquirido"}
       </button>
 
       {showCheckout && <Checkout onFinish={handleFinish} />}
