@@ -20,7 +20,7 @@ export default async function OverviewPage() {
     <div className="min-h-screen bg-neutral-100">
       <NavBarHome />
 
-      <div className="flex flex-col xl:flex-row xl:items-start items-center w-full p-6 gap-6">
+      <div className="flex flex-col items-center w-full p-6 gap-6">
         {/* Painel de boas-vindas e resumo financeiro */}
         <div className="w-full xl:w-1/2 bg-white rounded-2xl shadow-md p-6 flex flex-col gap-6">
           <h1 className="text-2xl font-bold text-gray-800 text-center xl:text-left">

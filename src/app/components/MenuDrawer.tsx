@@ -45,7 +45,7 @@ export default function MenuDrawer() {
         <Link href="/about" className="px-4 py-3 rounded hover:bg-gray-100 transition">
           Quem somos
         </Link>
-        <Link href="/subscriptions" className="px-4 py-3 rounded hover:bg-gray-100 transition">
+        <Link href="/subscriptions-info" className="px-4 py-3 rounded hover:bg-gray-100 transition">
           Planos e preços
         </Link>
         <Link href="/bank-connection" className="px-4 py-3 rounded hover:bg-gray-100 transition">

@@ -5,8 +5,6 @@ import { stripe } from "@/lib/stripe";
 import { SubscriptionType } from "@/types/SubscriptionType";
 import { prisma } from "@/lib/prisma";
 import { TransactionInput, TransactionResponse } from "@/types/TransactionTypes";
-import { object } from "framer-motion/client";
-
 export async function fetchSubscriptions(): Promise<{ subscriptions: SubscriptionType[] }> {
   const { data: products } = await stripe.products.list();
 
@@ -28,6 +26,29 @@ export async function fetchSubscriptions(): Promise<{ subscriptions: Subscriptio
   }
 
   return { subscriptions };
+}
+
+export async function fetchSubscriptionById(productId: string): Promise<SubscriptionType | null> {
+  try {
+    const product = await stripe.products.retrieve(productId);
+    const prices = await stripe.prices.list({ product: product.id, limit: 1 });
+
+    const price = prices.data[0];
+
+    if (price && price.unit_amount !== null) {
+      return {
+        id: product.id,
+        name: product.name,
+        description: product.description ?? "",
+        price: price.unit_amount / 100, // centavos -> reais
+      };
+    }
+
+    return null;
+  } catch (error) {
+    console.error("Erro ao buscar assinatura:", error);
+    return null;
+  }
 }
 
 export async function getTransactions(userId: string, limit: number): Promise<TransactionResponse[]> {

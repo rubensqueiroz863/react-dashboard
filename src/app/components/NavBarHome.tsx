@@ -7,8 +7,8 @@ import Link from 'next/link';
 export default function NavBarHome() {
   const navItems = [
     { label: 'visão geral', href: '/overview' },
-    { label: 'lançamentos', href: '/entries' },
     { label: 'relatórios', href: '/reports' },
+    { label: 'planos', href: '/subscriptions' },
     { label: 'limites de gastos', href: '/budget-limits' },
   ];
 

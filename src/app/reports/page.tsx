@@ -1,7 +1,6 @@
 "use client";
 
 import NavBarHome from "../components/NavBarHome";
-import Transactions from "../components/Transactions";
 import { useUser } from "@clerk/nextjs";
 import TransactionsScroll from "../components/TransactionScroll";
 
@@ -20,5 +19,5 @@ export default function EntriesPage() {
             </div>
         </div>
 
-    )
+    );
 }

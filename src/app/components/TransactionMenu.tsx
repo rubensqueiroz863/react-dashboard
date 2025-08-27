@@ -20,7 +20,7 @@ export default function TransactionsMenu() {
     return (
         <div>
             {/* Bloco de Acesso Rápido */}
-            <div className="w-full xl:w-1/2 bg-white p-6 rounded-xl shadow-md">
+            <div className="w-full bg-white p-6 rounded-xl shadow-md">
                 <div className="mb-6 mt-6 font-bold text-2xl">
                     <p>Acesso rápido</p>
                 </div>
@@ -64,13 +64,13 @@ export default function TransactionsMenu() {
                                 className="w-8 h-8 mx-auto"
                             />
                             <span className="absolute border mt-2 w-30 top-full mb-2 hidden group-hover:block bg-white text-xs px-2 py-1 rounded">
-                                Ver Relatórios
+                                Ver Relátorios
                             </span>
                         </button>
                     </Link>
                 </div>
                 </div>
-                <div className="flex md:flex-col shadow-md bg-white rounded-xl xl:flex-row items-center mt-6">
+                <div className="flex md:flex-col shadow-md bg-white rounded-xl items-center mt-6">
                     <div className="mb-6 mt-6 font-bold text-2xl">
                         <p>Transações mais recentes</p>
                     </div>

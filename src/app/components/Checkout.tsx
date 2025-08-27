@@ -1,64 +1,76 @@
-'use client';
+'use client'
 
 import { loadStripe, StripeElementsOptions } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
+import { useCartStore } from "@/store";
 import { useEffect, useState } from "react";
-import CheckoutForm from "./CheckoutForm"; 
-import { SubscriptionType } from "@/types/SubscriptionType";
+import CheckoutForm from "./CheckoutForm";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 type CheckoutProps = {
-  item: SubscriptionType; // Recebe o item direto
-};
+  onFinish: () => void;
+}
 
-export default function Checkout({ item }: CheckoutProps) {
+export default function Checkout({ onFinish }: CheckoutProps) {
+  const cartStore = useCartStore();
+  const item = cartStore.item; // pega o item diretamente
   const [clientSecret, setClientSecret] = useState('');
-  const [paymentIntent, setPaymentIntent] = useState<{ id: string; client_secret: string } | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!item) return;
+    if (!item) {
+      setLoading(false); // garante que não fique carregando indefinidamente
+      return;
+    }
 
-    fetch('/api/create-payment-intent', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        item,
-        payment_intent_id: paymentIntent?.id, // reusa se já existir
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setPaymentIntent(data.paymentIntent);
+    const createPaymentIntent = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const res = await fetch('/api/create-payment-intent', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            item,
+            payment_intent_id: cartStore.paymentIntent?.id
+          }),
+        });
+
+        // Se a resposta não for 2xx, tenta pegar erro
+        if (!res.ok) {
+          const text = await res.text(); // evita erro se não tiver JSON
+          throw new Error(text || 'Erro desconhecido');
+        }
+
+        const data = await res.json();
+        cartStore.setPaymentIntent(data.paymentIntent);
         setClientSecret(data.paymentIntent.client_secret);
-      })
-      .catch((err) => {
+      } catch (err: unknown) {
         console.error("Erro ao criar Payment Intent:", err);
-      });
+        setError("Erro desconhecido");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  }, [item, paymentIntent]);
+    createPaymentIntent();
+  }, [item, cartStore.paymentIntent?.id]);
+
+  if (loading) return <div>Carregando...</div>;
+  if (error) return <div className="text-red-500">Erro: {error}</div>;
+  if (!clientSecret) return <div>Pagamento não disponível</div>;
 
   const options: StripeElementsOptions = {
     clientSecret,
-    appearance: {
-      theme: 'night',
-      labels: 'floating',
-    }
-  };
+    appearance: { theme: 'night', labels: 'floating' }
+  }
 
   return (
-    <div>
-      {clientSecret ? (
-        <Elements options={options} stripe={stripePromise}>
-          <CheckoutForm clientSecret={clientSecret} />
-        </Elements>
-      ) : (
-        <div>
-          <h1>Carregando...</h1>
-        </div>
-      )}
-    </div>
+    <Elements options={options} stripe={stripePromise}>
+      <CheckoutForm clientSecret={clientSecret} onSuccess={onFinish} />
+    </Elements>
   );
 }

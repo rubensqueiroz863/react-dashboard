@@ -14,27 +14,40 @@ export async function POST(req: Request) {
     return new Response("Unauthorized", { status: 401 });
   }
 
-  // Buscar o usuário no banco usando o externalId (do Clerk)
+  // Busca o usuário no banco
   const user = await prisma.user.findUnique({
     where: { externalId: userId }
   });
-
   if (!user) {
     return new Response("User not found", { status: 404 });
   }
 
-  if (payment_intent_id) {
-    // Atualizar pagamento existente
-    const current_intent = await stripe.paymentIntents.retrieve(payment_intent_id);
+  // Garante que o produto exista
+  const product = await prisma.product.upsert({
+    where: { id: item.id }, // se quiser gerar ID automático, use remove id daqui
+    update: {},
+    create: {
+      id: item.id,
+      name: item.name,
+      description: item.description ?? "",
+      price: totalPrice(item),
+    }
+  });
 
+  const amount = totalPrice(item) * 100; // centavos para Stripe
+
+  if (payment_intent_id) {
+    // Atualiza PaymentIntent existente
+    const current_intent = await stripe.paymentIntents.retrieve(payment_intent_id);
     if (!current_intent) {
       return NextResponse.json({ error: "Payment intent not found" }, { status: 404 });
     }
 
     const updated_intent = await stripe.paymentIntents.update(payment_intent_id, {
-      amount: totalPrice(item)
+      amount
     });
 
+    // Atualiza order existente
     const existing_order = await prisma.order.findFirst({
       where: { paymentIntentID: payment_intent_id },
       include: { products: true }
@@ -47,14 +60,9 @@ export async function POST(req: Request) {
     await prisma.order.update({
       where: { paymentIntentID: payment_intent_id },
       data: {
-        amount: totalPrice(item),
+        amount,
         products: {
-          deleteMany: {}, // apaga produto anterior
-          create: {
-            name: item.name,
-            description: item.description ?? "",
-            price: totalPrice(item),
-          }
+          set: [{ id: product.id }] // substitui por produto atual
         }
       }
     });
@@ -62,27 +70,22 @@ export async function POST(req: Request) {
     return NextResponse.json({ paymentIntent: updated_intent }, { status: 200 });
   } 
 
-  // Criar novo pagamento
+  // Cria novo PaymentIntent
   const paymentIntent = await stripe.paymentIntents.create({
-    amount: totalPrice(item),
+    amount,
     currency: 'brl',
     automatic_payment_methods: { enabled: true },
   });
 
-  const newOrder = await prisma.order.create({
+  // Cria nova ordem
+  await prisma.order.create({
     data: {
-      user: { connect: { id: user.id } }, // conecta pelo id interno
+      user: { connect: { id: user.id } },
       currency: 'brl',
       status: 'pending',
       paymentIntentID: paymentIntent.id,
-      amount: totalPrice(item),
-      products: {
-        create: {
-          name: item.name,
-          description: item.description ?? "",
-          price: totalPrice(item)
-        }
-      }
+      amount,
+      products: { connect: { id: product.id } }
     }
   });
 

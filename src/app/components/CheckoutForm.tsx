@@ -5,9 +5,10 @@ import { useStripe, useElements, PaymentElement } from "@stripe/react-stripe-js"
 
 type CheckoutFormProps = {
   clientSecret: string;
+  onSuccess: () => void; // callback para após pagamento
 };
 
-export default function CheckoutForm({ clientSecret }: CheckoutFormProps) {
+export default function CheckoutForm({ clientSecret, onSuccess }: CheckoutFormProps) {
   const stripe = useStripe();
   const elements = useElements();
 
@@ -23,17 +24,19 @@ export default function CheckoutForm({ clientSecret }: CheckoutFormProps) {
     setLoading(true);
     setErrorMessage(null);
 
-    const { error } = await stripe.confirmPayment({
+    const { error, paymentIntent } = await stripe.confirmPayment({
       elements,
       confirmParams: {
         return_url: `${window.location.origin}/checkout/success`,
       },
+      redirect: 'if_required', // evita redirecionamento automático
     });
 
     if (error) {
       setErrorMessage(error.message || "Ocorreu um erro no pagamento.");
-    } else {
+    } else if (paymentIntent && paymentIntent.status === "succeeded") {
       setSuccess(true);
+      onSuccess(); // chama callback para limpar carrinho
     }
 
     setLoading(false);
