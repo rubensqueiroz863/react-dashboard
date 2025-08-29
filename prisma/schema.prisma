@@ -20,7 +20,7 @@ model User {
 
 model Order {
   id              String    @id @default(cuid())
-  user            User      @relation(fields: [userId], references: [id])
+  user            User      @relation(fields: [userId], references: [externalId])
   userId          String    // id agora é string
   amount          Float
   currency        String
@@ -51,4 +51,3 @@ model Transaction {
   userId    String
   createdAt DateTime @default(now())
 }
-

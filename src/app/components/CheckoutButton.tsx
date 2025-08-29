@@ -20,10 +20,13 @@ export default function CheckoutButton({ item }: CheckoutButtonProps) {
   const { user } = useUser();
   const cartStore = useCartStore();
 
+  const userId = user?.id;
+
   useEffect(() => {
     const checkOrder = async () => {
       if (!user) return;
-      const result = await existsOrder(item.id);
+      const result = await existsOrder(item.id, userId!);
+      console.log(user.id);
       setAvailable(!result); // se existe order completa, desativa botão
     };
     checkOrder();

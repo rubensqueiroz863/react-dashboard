@@ -69,7 +69,7 @@ export async function completePayment(payment_intent_id: string) {
   }
 }
 
-export async function existsOrder(productId: string) {
+export async function existsOrder(productId: string, userId: string) {
   if (!productId || typeof productId !== "string") {
     throw new Error("ID do produto é obrigatório e deve ser uma string");
   }
@@ -81,6 +81,7 @@ export async function existsOrder(productId: string) {
           some: { id: productId }, // procura orders que tenham pelo menos esse produto
         },
         status: "completed",
+        userId: userId,
       },
     });
 
