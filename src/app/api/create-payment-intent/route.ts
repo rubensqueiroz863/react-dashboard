@@ -1,17 +1,24 @@
 import { auth } from '@clerk/nextjs/server';
 import { stripe } from "@/lib/stripe";
-import { SubscriptionType } from '@/types/SubscriptionType';
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
-
-const totalPrice = (item: SubscriptionType) => item.price ?? 0;
+import Stripe from 'stripe';
+import { error } from 'console';
 
 export async function POST(req: Request) {
   const { userId } = await auth();
   const { item, payment_intent_id } = await req.json();
 
+  let paymentIntent: Stripe.PaymentIntent;
+  const price = item.price ?? 0;
+  const amount = price * 100;
+
   if (!userId) {
-    return new Response("Unauthorized", { status: 401 });
+    return new Response("Unauthorized", { status: 404 });
+  }
+
+  if (!item?.id || !item?.name || typeof item.price !== "number") {
+    return NextResponse.json({ error: "Dados de produtos inválidos." }, { status: 400 });
   }
 
   // Busca o usuário no banco
@@ -30,11 +37,11 @@ export async function POST(req: Request) {
       id: item.id,
       name: item.name,
       description: item.description ?? "",
-      price: totalPrice(item),
+      price,
     }
   });
 
-  const amount = totalPrice(item) * 100; // centavos para Stripe
+  //const amount = totalPrice(item) * 100; // centavos para Stripe
 
   if (payment_intent_id) {
     // Atualiza PaymentIntent existente
@@ -71,11 +78,16 @@ export async function POST(req: Request) {
   } 
 
   // Cria novo PaymentIntent
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount,
-    currency: 'brl',
-    automatic_payment_methods: { enabled: true },
-  });
+  try {
+    paymentIntent = await stripe.paymentIntents.create({
+      amount,
+      currency: 'brl',
+      automatic_payment_methods: { enabled: true },
+    });
+  } catch (err) {
+    return NextResponse.json({ error: "Não foi possível criar o paymentIntent." }, { status: 502 });
+  }
+  
 
   // Cria nova ordem
   await prisma.order.create({

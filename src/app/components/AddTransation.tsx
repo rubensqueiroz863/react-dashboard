@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { TransactionInput, TransactionResponse } from "@/types/TransactionTypes";
 import { useUser } from "@clerk/nextjs";
+import { TransactionInput, TransactionResponse } from "@/types/TransactionTypes";
 
 type TransactionProps = {
   type: "income" | "expense";
@@ -43,9 +43,10 @@ export async function addTransaction(input: TransactionInput): Promise<Transacti
 // Componente de modal
 export default function Transaction({ type, onClose }: TransactionProps) {
   const [name, setName] = useState("");
-  const [amount, setAmount] = useState("");
+  const [amount, setAmount] = useState<string>("");
   const [currency, setCurrency] = useState("BRL");
   const [status] = useState("completed");
+  const [error, setError] = useState<string | null>(null);
   const { user, isLoaded } = useUser();
 
   if (!isLoaded) return <div>Carregando...</div>;
@@ -56,7 +57,13 @@ export default function Transaction({ type, onClose }: TransactionProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    const numericAmount = parseInt(amount.replace(/\D/g, ""), 10) / 100;
+    const numericAmount = Number(amount.replace(/\D/g, "")) / 100 || 0;
+      if (numericAmount <= 0) {
+        console.error("Valor inválido");
+        setError("Valor invalido.");
+        return;
+    }
+
 
     const result = await addTransaction({
       name,
@@ -94,6 +101,7 @@ export default function Transaction({ type, onClose }: TransactionProps) {
     setAmount(formatted);
   };
 
+  if (error) <p className="text-red-500">{error}</p>;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">

@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { loadStripe, StripeElementsOptions } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
@@ -6,6 +6,7 @@ import { useCartStore } from "@/store";
 import { useEffect, useState } from "react";
 import CheckoutForm from "./CheckoutForm";
 import { completePayment } from "../actions";
+import { useRouter } from "next/navigation";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -19,6 +20,8 @@ export default function Checkout({ onFinish }: CheckoutProps) {
   const [clientSecret, setClientSecret] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const router = useRouter();
 
   useEffect(() => {
     if (!item) {
@@ -58,7 +61,7 @@ export default function Checkout({ onFinish }: CheckoutProps) {
     };
     createPaymentIntent();
 
-  }, [item, cartStore.paymentIntent?.id]);
+  }, [item]);
 
   if (loading) return <div>Carregando...</div>;
   if (error) return <div className="text-red-500">Erro: {error}</div>;
@@ -76,7 +79,7 @@ export default function Checkout({ onFinish }: CheckoutProps) {
           if (cartStore.paymentIntent?.id) {
             await completePayment(cartStore.paymentIntent.id);
           }
-          window.location.reload(); // recarrega a página
+          cartStore.clearCart();
           onFinish(); // se quiser disparar algo extra passado como prop
         }} 
       />

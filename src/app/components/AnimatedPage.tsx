@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -8,6 +8,13 @@ type Props = {
 };
 
 export default function AnimatedHome({ userId }: Props) {
+
+  const fadeInUp = (delay = 0) => ({
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { delay, duration: 0.8 },
+  });
+
   return (
     <section className="flex mb-20 flex-col w-full items-center justify-center">
 
@@ -18,16 +25,14 @@ export default function AnimatedHome({ userId }: Props) {
         transition={{ duration: 0.8 }}
         className="flex items-center justify-center flex-col"
       >
-        <h1 className="text-5xl mb-5 font-black">FinanX</h1>
-        <h1 className="text-4xl">Controle suas finanças</h1>
-        <h1 className="text-4xl font-bold">com facilidade</h1>
+        <p className="text-5xl mb-5 font-black">FinanX</p>
+        <p className="text-4xl">Controle suas finanças</p>
+        <p className="text-4xl font-bold">com facilidade</p>
       </motion.div>
 
       {/* Parágrafos */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5, duration: 0.8 }}
+        {...fadeInUp(0.5)}
         className="flex flex-col justify-center items-center my-10"
       >
         <p className="text-md">Tudo o que você precisa para controlar suas finanças</p>
@@ -35,13 +40,9 @@ export default function AnimatedHome({ userId }: Props) {
       </motion.div>
 
       {/* Botão com animação e interatividade */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1, duration: 0.8 }}
-      >
         <Link href={userId ? "/overview" : "/sign-in"}>
           <motion.button
+            {...fadeInUp(1)}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="bg-neutral-800 cursor-pointer text-white py-2 px-6 rounded-md font-medium transition-all duration-300 hover:shadow-xl hover:bg-neutral-700"
@@ -49,7 +50,6 @@ export default function AnimatedHome({ userId }: Props) {
             Começar agora
           </motion.button>
         </Link>
-      </motion.div>
     </section>
   );
 }

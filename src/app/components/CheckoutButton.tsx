@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/store";
@@ -15,6 +15,7 @@ type CheckoutButtonProps = {
 
 export default function CheckoutButton({ item }: CheckoutButtonProps) {
   const [showCheckout, setShowCheckout] = useState(false);
+  const [isProcessing, setInProcessing] = useState(false);
   const [available, setAvailable] = useState<boolean | null>(null);
   const router = useRouter();
   const { user } = useUser();
@@ -26,11 +27,12 @@ export default function CheckoutButton({ item }: CheckoutButtonProps) {
     const checkOrder = async () => {
       if (!user) return;
       const result = await existsOrder(item.id, userId!);
-      console.log(user.id);
+      //console.log(existsOrder(item.id, userId!));
+      
       setAvailable(!result); // se existe order completa, desativa botão
     };
     checkOrder();
-  }, [item.id, user]);
+  }, [item.id, userId]);
 
   const handleCheckout = () => {
     if (!user) {
@@ -42,12 +44,31 @@ export default function CheckoutButton({ item }: CheckoutButtonProps) {
     cartStore.setItem(item);
     cartStore.setCheckout('checkout');
     setShowCheckout(true);
+    setInProcessing(true);
   }
 
-  const handleFinish = () => {
+  const handleFinish = async () => {
     cartStore.clearCart();
-    setShowCheckout(false);
-    setAvailable(false); // marca como adquirido após a compra
+    setAvailable(false);
+    setInProcessing(false);
+
+    setTimeout(() => {
+      setShowCheckout(false);
+      router.refresh();
+    }, 8000);
+
+    let attempts = 0;
+    const check = async () => {
+      if (attempts > 5) return; // para depois de 5 tentativas
+      const result = await existsOrder(item.id, userId!);
+      if (!result) {
+        setAvailable(false);
+      } else {
+        attempts++;
+        setTimeout(check, 2000);
+      }
+    };
+    check();
   }
 
   if (available === null) return <button disabled className="w-full rounded-md mb-10 bg-gray-400 py-2">Carregando...</button>;
@@ -60,12 +81,18 @@ export default function CheckoutButton({ item }: CheckoutButtonProps) {
       <button 
         onClick={handleCheckout}
         disabled={!available}
-        className={`w-full rounded-md mb-10 py-2 text-white ${available ? 'bg-neutral-600' : 'bg-gray-400'}`}
+        className={`w-full cursor-pointer rounded-md mb-10 py-2 text-white ${available ? 'bg-neutral-600' : 'bg-gray-400'}`}
       >
         {available ? "Finalizar Compra" : "Plano já adquirido"}
       </button>
 
       {showCheckout && <Checkout onFinish={handleFinish} />}
+      
+      {isProcessing && (
+        <div className="text-center text-neutral-600 font-bold my-2">
+          Processando transação...
+        </div>
+      )}
     </div>
   );
 }

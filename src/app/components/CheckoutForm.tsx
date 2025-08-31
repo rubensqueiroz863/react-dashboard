@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState } from "react";
 import { useStripe, useElements, PaymentElement } from "@stripe/react-stripe-js";
@@ -33,13 +33,12 @@ export default function CheckoutForm({ clientSecret, onSuccess }: CheckoutFormPr
     });
 
     if (error) {
+      setLoading(false);
       setErrorMessage(error.message || "Ocorreu um erro no pagamento.");
     } else if (paymentIntent && paymentIntent.status === "succeeded") {
       setSuccess(true);
       onSuccess(); // chama callback para limpar carrinho
     }
-
-    setLoading(false);
   };
 
   if (success) {
@@ -52,15 +51,21 @@ export default function CheckoutForm({ clientSecret, onSuccess }: CheckoutFormPr
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4 relative">
       <PaymentElement options={{ layout: "tabs" }} />
-      
+
+      {loading && (
+        <div className="absolute inset-0 bg-white/50 flex items-center justify-center text-gray-500 font-bold">
+          Processando...
+        </div>
+      )}
+
       {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
 
       <button
         type="submit"
         disabled={!stripe || loading}
-        className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg disabled:opacity-50"
+        className="w-full cursor-pointer bg-blue-600 text-white py-2 px-4 rounded-lg disabled:opacity-50"
       >
         {loading ? "Processando..." : "Pagar agora"}
       </button>

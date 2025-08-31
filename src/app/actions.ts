@@ -81,7 +81,7 @@ export async function existsOrder(productId: string, userId: string) {
           some: { id: productId }, // procura orders que tenham pelo menos esse produto
         },
         status: "completed",
-        userId: userId,
+        userId: userId
       },
     });
 

@@ -11,31 +11,45 @@ interface DeleteButtonProps {
 
 export default function DeleteButton({ transactionId }: DeleteButtonProps) {
   const [showDeleteMenu, setShowDeleteMenu] = useState(false);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleDelete = async () => {
-    await deleteTransaction(transactionId); // chama Server Action
-    setShowDeleteMenu(false);
-    router.push("/overview"); // redireciona após exclusão
+    setLoading(true);
+    try {
+      await deleteTransaction(transactionId); // chama Server Action
+      setShowDeleteMenu(false);
+      router.push("/overview"); // redireciona após exclusão
+    } finally {
+      setLoading(false);
+    }
+    
   };
 
   return (
     <div className="flex flex-col items-end mt-4">
       <button
         onClick={() => setShowDeleteMenu(true)}
+        aria-label="Excluir transação"
         className="rounded-md border cursor-pointer border-gray-200 p-1 bg-white hover:bg-neutral-100"
+        disabled={loading}
       >
-        <img
-          src="https://i.postimg.cc/P53XV5vb/8ecc75c9d0cf6d942cce96e196d4953f-trash-bin-icon-flat.webp"
-          alt="delete transaction"
-          className="w-7 h-7"
-        />
+        {loading ? (
+          <span className="text-sm text-gray-500">Excluindo...</span>
+        ) : (
+          <img
+            src="https://i.postimg.cc/P53XV5vb/8ecc75c9d0cf6d942cce96e196d4953f-trash-bin-icon-flat.webp"
+            alt="delete transaction"
+            className="w-7 h-7"
+          />
+        )}
       </button>
 
       {showDeleteMenu && (
         <DeleteMenu
           onConfirm={handleDelete}
           onCancel={() => setShowDeleteMenu(false)}
+          loading={loading}
         />
       )}
     </div>
