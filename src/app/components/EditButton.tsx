@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import EditMenu from "./EditMenu";
-import { deleteTransaction, getOneTransaction } from "../actions";  
+import { getOneTransaction } from "../actions";  
 import { TransactionResponse } from "@/types/TransactionTypes";
 
 interface DeleteButtonProps {
@@ -14,14 +14,19 @@ export default function EditButton({ transactionId }: DeleteButtonProps) {
   const [transaction, setTransaction] = useState<TransactionResponse | null>(null);
 
   useEffect(() => {
-    getOneTransaction(transactionId).then(setTransaction);
+    let isMounted = true;
+    const fetchTransaction = async () => {
+      try {
+        const data = await getOneTransaction(transactionId);
+        if (isMounted) setTransaction(data);
+      } catch (err: unknown) {
+        console.error("Erro ao buscar transação: ", err);
+      }
+    };
+    fetchTransaction();
+    
+    return () => { isMounted = false; };
   }, [transactionId]);
-
-  const handleEdit = async () => {
-    await deleteTransaction(transactionId); 
-    setShowEditMenu(false);
-    window.location.reload();
-  };
 
   return (
     <div className="flex flex-col items-end mt-4">
@@ -36,15 +41,18 @@ export default function EditButton({ transactionId }: DeleteButtonProps) {
         />
       </button>
 
-      {showEditMenu && transaction && (
-        <EditMenu 
-            type={transaction.type as "income" | "expense"}
-            onClose={() => setShowEditMenu(false)}
-            transactionId={transactionId}
-            transactionName={transaction.name!}
-            transactionPrice={transaction.amount.toString()}
-        />
-      )}
+      {showEditMenu ?
+        transaction ? (
+          <EditMenu 
+              type={transaction.type as "income" | "expense"}
+              onClose={() => setShowEditMenu(false)}
+              transactionId={transactionId}
+              transactionName={transaction.name!}
+              transactionPrice={transaction.amount.toString()}
+          />
+        ) : (
+          <div>Carregando...</div>
+      ) : null}
     </div>
   );
 }

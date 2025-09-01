@@ -237,7 +237,7 @@ export async function editTransaction(transactionId: string, transaction: Transa
     throw new Error("ID da transação é obrigatório e deve ser uma string");
   }
   try {
-    const updateTransaction = await prisma.transaction.update({
+    const updatedTransaction = await prisma.transaction.update({
       where: { id: transactionId },
       data: transaction,
     })

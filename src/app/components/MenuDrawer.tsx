@@ -16,12 +16,14 @@ export default function MenuDrawer() {
 
     if (menu.isOpen) {
       document.addEventListener("click", handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
+
     }
 
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
-  }, [menu.isOpen, menu.closeMenu, menu]);
+  }, [menu.isOpen, menu.closeMenu]);
 
   return (
     <motion.div
@@ -34,25 +36,50 @@ export default function MenuDrawer() {
     >
       <div className="flex items-center justify-between p-4 border-b">
         <h2 className="text-xl font-semibold">Menu</h2>
-        <button onClick={menu.closeMenu} aria-label="Fechar menu">
+        <button
+          className="cursor-pointer w-8" 
+          onClick={menu.closeMenu}
+          aria-label="Fechar menu"
+        >
+          ✕
         </button>
       </div>
 
       <nav className="flex flex-col p-2">
-        <Link href="/" className="px-4 py-3 rounded hover:bg-gray-100 transition">
+        <Link 
+          href="/" 
+          className="px-4 py-3 rounded hover:bg-gray-100 transition"
+          onClick={menu.closeMenu}
+        >
           Início
         </Link>
-        <Link href="/about" className="px-4 py-3 rounded hover:bg-gray-100 transition">
+        <Link 
+          href="/about"
+          className="px-4 py-3 rounded hover:bg-gray-100 transition"
+          onClick={menu.closeMenu}
+        >
           Quem somos
         </Link>
-        <Link href="/subscriptions-info" className="px-4 py-3 rounded hover:bg-gray-100 transition">
+        <Link 
+          href="/subscriptions-info" 
+          className="px-4 py-3 rounded hover:bg-gray-100 transition"
+          onClick={menu.closeMenu}
+        >
           Planos e preços
         </Link>
-        <Link href="/bank-connection" className="px-4 py-3 rounded hover:bg-gray-100 transition">
+        <Link 
+          href="/bank-connection"
+          className="px-4 py-3 rounded hover:bg-gray-100 transition"
+          onClick={menu.closeMenu}
+        >
           Conexão Bancária
         </Link>
-        <Link href="#" className="px-4 py-3 rounded hover:bg-gray-100 transition">
-          Teste 3
+        <Link 
+          href="#"
+          className="px-4 py-3 rounded hover:bg-gray-100 transition"
+          onClick={menu.closeMenu}
+        >
+          Teste
         </Link>
       </nav>
     </motion.div>

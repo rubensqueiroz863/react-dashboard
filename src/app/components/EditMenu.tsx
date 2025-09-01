@@ -3,6 +3,7 @@
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { editTransaction } from "../actions";
+import { useRouter } from "next/navigation";
 
 type TransactionProps = {
   transactionId: string;
@@ -10,6 +11,7 @@ type TransactionProps = {
   transactionPrice: string; // vem no formato "234445" (centavos)
   type: "income" | "expense";
   onClose: () => void;
+  onUpdated?: () => void;
 };
 
 export default function EditMenu({ 
@@ -17,69 +19,72 @@ export default function EditMenu({
   onClose, 
   transactionId , 
   transactionName, 
-  transactionPrice 
+  transactionPrice,
+  onUpdated,
 }: TransactionProps) {
+  const { user, isLoaded } = useUser();
   const [name, setName] = useState("");
   const [amount, setAmount] = useState(""); // valor formatado para exibir no input
   const [currency, setCurrency] = useState("BRL");
-  const [status] = useState("completed");
-  const { user, isLoaded } = useUser();
-
-  const price = (parseFloat(transactionPrice)*100).toString();
-
-  // Inicializa os valores quando o modal abre
-  useEffect(() => {
-    setName(transactionName);
-
-    // Converte string "234445" (centavos) para número
-    const number = parseInt(price || "0", 10);
-    // Divide por 100 e formata em moeda
-    const formatted = (number / 100).toLocaleString("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    });
-    setAmount(formatted);
-  }, [transactionName, price]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   if (!isLoaded) return <div>Carregando...</div>;
   if (!user) return <div>Usuário não encontrado</div>;
 
-  const userId = user.id;
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-
-    // Transforma o valor formatado do input em número
-    const numericAmount = parseInt(amount.replace(/\D/g, ""), 10) / 100;
-
-    const result = await editTransaction(transactionId, {
-      name,
-      amount: numericAmount,
-      currency,
-      type,
-      status,
-      userId,
+  // Inicializa os valores
+  useEffect(() => {
+    setName(transactionName);
+    const formatted = (parseFloat(transactionPrice)).toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     });
-
-    if (result) {
-      onClose();
-      window.location.reload();
-    }
-  }
+    setAmount(formatted);
+  }, [transactionName, transactionPrice]);
 
   // Função que formata o valor digitado enquanto o usuário edita
   const formatCurrency = (value: string) => {
-    const numericValue = value.replace(/\D/g, "");
-    const number = parseInt(numericValue || "0", 10);
-    return (number / 100).toLocaleString("pt-BR", {
+    const numeric = value.replace(/\D/g, "");
+    return (parseFloat(numeric || "0") / 100 ).toLocaleString("pt-BR", {
       style: "currency",
       currency: "BRL",
     });
   };
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const rawValue = e.target.value;
-    setAmount(formatCurrency(rawValue));
+    setAmount(formatCurrency(e.target.value));
+  };
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    try {
+      const numericAmount = parseInt(amount.replace(/\D/g, ""), 10) / 100;
+      
+      const success = await editTransaction(transactionId, {
+        name,
+        amount: numericAmount,
+        currency,
+        type,
+        status: "completed",
+        userId: user!.id,
+      });
+
+      if (success) {
+        onClose();
+        window.location.reload();
+      } else {
+        setError("Não foi possível salvar a transação.")
+      }
+    } catch(err) {
+      console.error(err);
+      setError("Erro ao salvar. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -89,6 +94,8 @@ export default function EditMenu({
           {type === "income" ? "Editar Receita" : "Editar Despesa"}
         </h2>
 
+        {error && <p className="text-red-500 mb-2">{error}</p>}
+
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
             type="text"
@@ -96,6 +103,7 @@ export default function EditMenu({
             value={name}
             onChange={(e) => setName(e.target.value)}
             className="border border-gray-300 rounded px-3 py-2"
+            disabled={loading}
           />
           
           <input
@@ -104,12 +112,14 @@ export default function EditMenu({
             value={amount}
             onChange={handleAmountChange}
             className="border border-gray-300 rounded px-3 py-2"
+            disabled={loading}
           />
           
           <select
             value={currency}
             onChange={(e) => setCurrency(e.target.value)}
             className="border border-gray-300 rounded px-3 py-2"
+            disabled={loading}
           >
             <option value="BRL">BRL - Real</option>
             <option value="USD">USD - Dólar</option>
@@ -118,14 +128,16 @@ export default function EditMenu({
           <div className="flex gap-2">
             <button
               type="submit"
-              className="bg-blue-500 cursor-pointer text-white rounded px-4 py-2 hover:bg-blue-600 flex-1"
+              disabled={loading}
+              className="bg-blue-500 cursor-pointer text-white rounded px-4 py-2 hover:bg-blue-600 flex-1 disabled:opacity-50"
             >
-              Salvar
+              {loading ? "Salvando..." : "Salvar"}
             </button>
             <button
               type="button"
               onClick={onClose}
-              className="bg-gray-300 cursor-pointer text-black rounded px-4 py-2 hover:bg-gray-400 flex-1"
+              disabled={loading}
+              className="bg-gray-300 cursor-pointer text-black rounded px-4 py-2 hover:bg-gray-400 flex-1 disabled:opacity-50"
             >
               Cancelar
             </button>

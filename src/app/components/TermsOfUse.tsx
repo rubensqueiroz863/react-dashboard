@@ -1,13 +1,13 @@
 export default function TermsOfUse() {
   return (
-    <div className="max-w-4xl mx-auto p-8">
+    <main className="max-w-4xl mx-auto px-4 sm:px-8 py-8">
       <h1 className="text-3xl font-bold mb-6">Termos de Uso</h1>
 
       <p className="mb-4">
         Última atualização: <strong>03/08/2025</strong>
       </p>
 
-      <section className="space-y-4 text-gray-800 leading-relaxed">
+      <article className="space-y-4 text-gray-800 leading-relaxed">
         <p>
           Ao utilizar este aplicativo, você concorda com estes Termos de Uso. Se você não concordar com algum termo, por favor, não use o serviço.
         </p>
@@ -30,11 +30,14 @@ export default function TermsOfUse() {
 
         <p>
           Em caso de dúvidas, entre em contato com:{" "}
-          <a href="mailto:rubensqueiroz863@gmail.com" className="text-blue-600 underline">
+          <a
+            href="mailto:rubensqueiroz863@gmail.com"
+            className="text-blue-600 underline"
+          >
             rubensqueiroz863@gmail.com
           </a>
         </p>
-      </section>
-    </div>
+      </article>
+    </main>
   );
 }

@@ -1,7 +1,8 @@
-'use client';
+"use client";
 
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 
 export default function NavBarHome() {
@@ -9,13 +10,19 @@ export default function NavBarHome() {
     { label: 'visão geral', href: '/overview' },
     { label: 'relatórios', href: '/reports' },
     { label: 'planos', href: '/subscriptions' },
-    { label: 'limites de gastos', href: '/budget-limits' },
+    { label: 'orçamento', href: '/budget-limits' },
   ];
 
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const [underlineProps, setUnderlineProps] = useState({ left: 0, width: 0 });
+  const [underlineProps, setUnderlineProps] = useState<[number, number]>([0, 0]);
   const containerRef = useRef<HTMLDivElement>(null);
-  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const itemRefs = useRef<HTMLDivElement[]>([]);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const activeIndex = navItems.findIndex(item => item.href === pathname);
+    if (activeIndex !== -1) setHoveredIndex(activeIndex);
+  }, [pathname]);
 
   useEffect(() => {
     if (hoveredIndex !== null && itemRefs.current[hoveredIndex]) {
@@ -24,10 +31,7 @@ export default function NavBarHome() {
       if (item && container) {
         const itemRect = item.getBoundingClientRect();
         const containerRect = container.getBoundingClientRect();
-        setUnderlineProps({
-          left: itemRect.left - containerRect.left,
-          width: itemRect.width,
-        });
+        setUnderlineProps([itemRect.left - containerRect.left, itemRect.width]);
       }
     }
   }, [hoveredIndex]);
@@ -40,10 +44,7 @@ export default function NavBarHome() {
       {navItems.map((item, index) => (
         <div
           key={index}
-          ref={(el) => {
-            itemRefs.current[index] = el; // sem retorno
-        }}
-
+          ref={(el) => { if (el) itemRefs.current[index] = el; }}
           onMouseEnter={() => setHoveredIndex(index)}
           onMouseLeave={() => setHoveredIndex(null)}
           className="relative px-2 text-sm text-center w-40 sm:text-base cursor-pointer"
@@ -57,7 +58,7 @@ export default function NavBarHome() {
       {hoveredIndex !== null && (
         <motion.div
           className="absolute bottom-0 h-[2px] bg-white rounded"
-          animate={{ left: underlineProps.left, width: underlineProps.width }}
+          animate={{ left: underlineProps[0], width: underlineProps[1] }}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         />
       )}

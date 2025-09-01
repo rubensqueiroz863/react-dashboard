@@ -1,5 +1,5 @@
-"use client";
-import { useEffect, useState, useRef } from "react";
+'use client';
+import { useEffect, useState, useRef, useCallback } from "react";
 import { getTransactionsScroll } from "@/app/actions";
 import { TransactionResponse } from "@/types/TransactionTypes";
 import Link from "next/link";
@@ -7,11 +7,12 @@ import Link from "next/link";
 export default function TransactionsScroll({ userId, limit }: { userId: string; limit: number }) {
   const [transactions, setTransactions] = useState<TransactionResponse[]>([]);
   const [page, setPage] = useState(0);
-  const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const fetching = useRef(false);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   const statusMap: Record<string, string> = {
     completed: "Concluída",
@@ -19,44 +20,50 @@ export default function TransactionsScroll({ userId, limit }: { userId: string; 
     failed: "Falha",
   };
 
-  async function loadTransactions() {
-    if (loading || !hasMore || fetching.current) return;
-    fetching.current = true;
+  const loadTransactions = useCallback(async () => {
+    if (loading || !hasMore) return;
     setLoading(true);
 
     const data = await getTransactionsScroll(userId, limit, page * limit);
-    setTransactions((prev) => [...prev, ...data]);
+    setTransactions(prev => [...prev, ...data]);
     setHasMore(data.length === limit);
-    setPage((prev) => prev + 1);
+    setPage(prev => prev + 1);
 
     setLoading(false);
-    fetching.current = false;
-  }
+  }, [userId, page, limit, hasMore, loading]);
 
-  // 🔹 primeira carga
+  // Primeira carga ou troca de usuário
   useEffect(() => {
     setTransactions([]);
     setPage(0);
     setHasMore(true);
-    loadTransactions();
   }, [userId]);
 
-  // 🔹 scroll infinito na div interna
-  function handleScroll() {
-    if (!containerRef.current) return;
-    const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
-    if (scrollTop + clientHeight >= scrollHeight - 100) {
-      loadTransactions();
+  // Scroll infinito usando IntersectionObserver
+  useEffect(() => {
+    if (!sentinelRef.current) return;
+    observerRef.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting) {
+        loadTransactions();
+      }
+    }, { root: containerRef.current, rootMargin: "100px" });
+
+    observerRef.current.observe(sentinelRef.current);
+
+    return () => observerRef.current?.disconnect();
+  }, [loadTransactions]);
+
+  const getStatusClass = (status: string) => {
+    switch (status) {
+      case "completed": return "bg-green-100 text-green-700";
+      case "pending": return "bg-yellow-100 text-yellow-700";
+      default: return "bg-red-100 text-red-700";
     }
-  }
+  };
 
   return (
-    <div
-      ref={containerRef}
-      className="overflow-auto h-[80vh]"
-      onScroll={handleScroll}
-    >
-      {transactions.map((tx) => {
+    <div ref={containerRef} className="overflow-auto h-[80vh]">
+      {transactions.map(tx => {
         const formattedAmount = new Intl.NumberFormat("pt-BR", {
           style: "currency",
           currency: tx.currency,
@@ -68,25 +75,14 @@ export default function TransactionsScroll({ userId, limit }: { userId: string; 
             <div className="rounded-2xl border border-gray-200 mb-4 bg-white p-4 shadow-sm hover:shadow-md transition">
               <div className="flex justify-between items-center">
                 <h2 className="text-lg font-semibold text-gray-800">{tx.name}</h2>
-                <span
-                  className={`px-3 py-1 rounded-full text-sm font-medium ${
-                    tx.status === "completed"
-                      ? "bg-green-100 text-green-700"
-                      : tx.status === "pending"
-                      ? "bg-yellow-100 text-yellow-700"
-                      : "bg-red-100 text-red-700"
-                  }`}
-                >
+                <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusClass(tx.status)}`}>
                   {statusMap[tx.status] || tx.status}
                 </span>
               </div>
               <p className={`mt-2 text-gray-600 ${typeColor}`}>
-                {tx.type === "income" ? "Receita" : "Despesa"} —{" "}
-                <span className="font-medium">{formattedAmount}</span>
+                {tx.type === "income" ? "Receita" : "Despesa"} — <span className="font-medium">{formattedAmount}</span>
               </p>
-              <p className="mt-1 text-sm text-gray-500">
-                {new Date(tx.createdAt).toLocaleString("pt-BR")}
-              </p>
+              <p className="mt-1 text-sm text-gray-500">{new Date(tx.createdAt).toLocaleString("pt-BR")}</p>
             </div>
           </Link>
         );
@@ -94,6 +90,8 @@ export default function TransactionsScroll({ userId, limit }: { userId: string; 
 
       {loading && <p className="text-center text-gray-500">Carregando...</p>}
       {!hasMore && <p className="text-center text-gray-400">Não há mais transações</p>}
+
+      <div ref={sentinelRef} />
     </div>
   );
 }

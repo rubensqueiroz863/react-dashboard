@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
 import { motion } from "framer-motion";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, subscriptionsFeatures } from "@/lib/utils";
 import Link from "next/link";
 
 interface Subscription {
@@ -11,42 +11,13 @@ interface Subscription {
   price: number;
 }
 
-export default function Subscriptions({
+export default function SubscriptionsCheckout({
   sub,
   index,
 }: {
   sub: Subscription;
   index: number;
 }) {
-  const features = [
-    [
-      "• Sem Conexão Bancária",
-      "• Controle manual de contas e cartões",
-      "• Criação de categorias e subcategorias",
-      "• Limite de gastos ilimitados",
-      "• Alerta de contas a pagar",
-      "• Relatórios completos e fáceis de entender",
-      "• Teste por 7 dias grátis",
-    ],
-    [
-      "• Tudo do Plano Manual",
-      "• Até 3 contas/cartões conectados",
-      "• Conexão via Open Finance",
-      "• Importe vários lançamentos com 1 clique",
-      "• Categorize os lançamentos do seu jeito",
-      "• Mais agilidade para organizar finanças",
-      "• Sem teste grátis",
-    ],
-    [
-      "• Tudo do Plano Manual",
-      "• Tudo do Plano Conectado",
-      "• Até 10 contas/cartões conectados",
-      "• Sem teste grátis",
-      "•",
-      "•",
-      "•",
-    ],
-  ];
 
   return (
     <Link href={`subscription-checkout/${sub.id}/`}>
@@ -61,8 +32,8 @@ export default function Subscriptions({
             <p className="py-2 text-md">{sub.description ?? "Sem descrição"}</p>
 
             <div className="space-y-2 text-neutral-500 font-sans text-sm mt-2">
-            {features[index].map((feature, i) => (
-                <p key={i}>{feature}</p>
+            {subscriptionsFeatures[index].map((subscriptionFeature, i) => (
+                <p key={i}>{subscriptionFeature}</p>
             ))}
             </div>
 
