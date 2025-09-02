@@ -58,7 +58,7 @@ export default function Checkout({ onFinish }: CheckoutProps) {
     };
     createPaymentIntent();
 
-  }, [item, cartStore.setPaymentIntent, cartStore.paymentIntent?.id]);
+  }, [item]);
 
   if (loading) return <div>Carregando...</div>;
   if (error) return <div className="text-red-500">Erro: {error}</div>;
