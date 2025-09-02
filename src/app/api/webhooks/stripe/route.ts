@@ -16,6 +16,7 @@ async function handler(req: Request) {
     try {
         event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET!);
     } catch (err) {
+        console.log(err);
         return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
     }
 
@@ -27,7 +28,7 @@ async function handler(req: Request) {
         case 'charge.succeeded':
             const charge = event.data.object as Stripe.Charge;
             if (typeof charge.payment_intent === 'string') {
-                const order = await prisma.order.update({
+                await prisma.order.update({
                     where: { paymentIntentID: charge.payment_intent },
                     data: { status: 'complete' },
                 });

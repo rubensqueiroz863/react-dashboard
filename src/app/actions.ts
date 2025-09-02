@@ -57,12 +57,11 @@ export async function completePayment(payment_intent_id: string) {
     throw new Error("ID da transação é obrigatório e deve ser uma string");
   }
   try {
-    const updatePaymentIntent = await prisma.order.update({
+      await prisma.order.update({
       where: { paymentIntentID: payment_intent_id },
       data: { status: "completed"},
     })
     return true;
-    console.log("Sucesso!");
   } catch (err) {
     console.error("Erro ao editar transação: ", err);
     return false;
@@ -237,12 +236,11 @@ export async function editTransaction(transactionId: string, transaction: Transa
     throw new Error("ID da transação é obrigatório e deve ser uma string");
   }
   try {
-    const updatedTransaction = await prisma.transaction.update({
+    await prisma.transaction.update({
       where: { id: transactionId },
       data: transaction,
     })
     return true;
-    console.log("Sucesso!");
   } catch (err) {
     console.error("Erro ao editar transação: ", err);
     return false;

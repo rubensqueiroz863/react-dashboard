@@ -5,6 +5,7 @@ import Transaction from "./AddTransation";
 import Transactions from "./Transactions";
 import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
+import Image from "next/image";
 
 type MenuType = "income" | "expense";
 
@@ -20,7 +21,13 @@ const MenuButton = ({ icon, alt, label, onClick }: MenuButtonProps) => (
     className="relative group border p-2 rounded-md cursor-pointer hover:bg-neutral-100 border-neutral-200"
     onClick={onClick}
   >
-    <img src={icon} alt={alt} className="w-8 h-8 mx-auto" />
+    <Image 
+      src={icon}
+      alt={alt}
+      width={28}
+      height={28}
+      className="mx-auto" 
+    />
     <span className="absolute border mt-2 w-30 top-full mb-2 hidden group-hover:block bg-white text-xs px-2 py-1 rounded">
       {label}
     </span>
@@ -43,14 +50,14 @@ export default function TransactionsMenu() {
 
         <div className="flex flex-wrap gap-6 items-center justify-center">
           <MenuButton
-            icon="https://i.postimg.cc/7hjfMpkW/images.png"
+            icon="https://i.postimg.cc/pLLQZTvg/2569198.png"
             alt="Add expense icon"
             label="Adicionar Despesa"
             onClick={() => setMenuType("expense")}
           />
 
           <MenuButton
-            icon="https://i.postimg.cc/nrXXmn6m/images-1.png"
+            icon="https://i.postimg.cc/yx6hbY9g/23324232.png"
             alt="Add revenue icon"
             label="Adicionar Receita"
             onClick={() => setMenuType("income")}
@@ -58,10 +65,12 @@ export default function TransactionsMenu() {
 
           <Link href="/reports">
             <button className="cursor-pointer relative group border p-2 rounded-md hover:bg-neutral-100 border-neutral-200">
-              <img
+              <Image
                 src="https://i.postimg.cc/mrTWq8Zp/383f43305de4fbc3c6a3bdfb25a1b758-icone-de-grafico-de-marketing.webp"
-                alt="Graphic image"
-                className="w-8 h-8 mx-auto"
+                alt="Botão de relatórios"
+                width={28}
+                height={28}
+                className="mx-auto"
               />
               <span className="absolute border mt-2 w-30 top-full mb-2 hidden group-hover:block bg-white text-xs px-2 py-1 rounded">
                 Ver Relatórios

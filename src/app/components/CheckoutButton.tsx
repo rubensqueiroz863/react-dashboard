@@ -27,7 +27,6 @@ export default function CheckoutButton({ item }: CheckoutButtonProps) {
     const checkOrder = async () => {
       if (!user) return;
       const result = await existsOrder(item.id, userId!);
-      //console.log(existsOrder(item.id, userId!));
       
       setAvailable(!result); // se existe order completa, desativa botão
     };

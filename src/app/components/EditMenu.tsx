@@ -3,7 +3,6 @@
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { editTransaction } from "../actions";
-import { useRouter } from "next/navigation";
 
 type TransactionProps = {
   transactionId: string;
@@ -20,7 +19,6 @@ export default function EditMenu({
   transactionId , 
   transactionName, 
   transactionPrice,
-  onUpdated,
 }: TransactionProps) {
   const { user, isLoaded } = useUser();
   const [name, setName] = useState("");
@@ -28,10 +26,6 @@ export default function EditMenu({
   const [currency, setCurrency] = useState("BRL");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
-
-  if (!isLoaded) return <div>Carregando...</div>;
-  if (!user) return <div>Usuário não encontrado</div>;
 
   // Inicializa os valores
   useEffect(() => {
@@ -86,6 +80,9 @@ export default function EditMenu({
       setLoading(false);
     }
   };
+
+  if (!isLoaded) return <div>Carregando...</div>;
+  if (!user) return <div>Usuário não encontrado</div>;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">

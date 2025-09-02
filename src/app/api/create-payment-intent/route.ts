@@ -84,7 +84,8 @@ export async function POST(req: Request) {
       automatic_payment_methods: { enabled: true },
     });
   } catch (err) {
-    return NextResponse.json({ error: "Não foi possível criar o paymentIntent." }, { status: 502 });
+    console.log(err);
+    return NextResponse.json({ error: "Não foi possível criar o paymentIntent: " }, { status: 502 });
   }
   
 

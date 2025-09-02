@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation"; // ✅ next/navigation para App Router
 import DeleteMenu from "./DeleteMenu";
 import { deleteTransaction } from "../actions";  // ✅ Server Action em arquivo separado
+import Image from "next/image";
 
 interface DeleteButtonProps {
   transactionId: string;
@@ -37,10 +38,11 @@ export default function DeleteButton({ transactionId }: DeleteButtonProps) {
         {loading ? (
           <span className="text-sm text-gray-500">Excluindo...</span>
         ) : (
-          <img
+          <Image
             src="https://i.postimg.cc/P53XV5vb/8ecc75c9d0cf6d942cce96e196d4953f-trash-bin-icon-flat.webp"
             alt="delete transaction"
-            className="w-7 h-7"
+            width={28}
+            height={28}
           />
         )}
       </button>

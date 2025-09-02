@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import EditMenu from "./EditMenu";
 import { getOneTransaction } from "../actions";  
 import { TransactionResponse } from "@/types/TransactionTypes";
+import Image from "next/image";
 
 interface DeleteButtonProps {
   transactionId: string;
@@ -34,10 +35,11 @@ export default function EditButton({ transactionId }: DeleteButtonProps) {
         onClick={() => setShowEditMenu(true)}
         className="rounded-md border cursor-pointer border-gray-200 p-1 bg-white hover:bg-neutral-100"
       >
-        <img
+        <Image
           src="https://i.postimg.cc/136BdT4v/1354320.png"
-          alt="edit transaction"
-          className="w-7 h-7"
+          alt="delete transaction"
+          width={28}
+          height={28}
         />
       </button>
 

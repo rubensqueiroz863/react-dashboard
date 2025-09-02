@@ -5,14 +5,14 @@ import { motion } from 'framer-motion';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 
-export default function NavBarHome() {
-  const navItems = [
-    { label: 'visão geral', href: '/overview' },
-    { label: 'relatórios', href: '/reports' },
-    { label: 'planos', href: '/subscriptions' },
-    { label: 'orçamento', href: '/budget-limits' },
-  ];
+const navItems = [
+  { label: 'visão geral', href: '/overview' },
+  { label: 'relatórios', href: '/reports' },
+  { label: 'planos', href: '/subscriptions' },
+  { label: 'orçamento', href: '/budget-limits' },
+];
 
+export default function NavBarHome() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [underlineProps, setUnderlineProps] = useState<[number, number]>([0, 0]);
   const containerRef = useRef<HTMLDivElement>(null);

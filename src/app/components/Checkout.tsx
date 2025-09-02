@@ -6,7 +6,6 @@ import { useCartStore } from "@/store";
 import { useEffect, useState } from "react";
 import CheckoutForm from "./CheckoutForm";
 import { completePayment } from "../actions";
-import { useRouter } from "next/navigation";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -20,8 +19,6 @@ export default function Checkout({ onFinish }: CheckoutProps) {
   const [clientSecret, setClientSecret] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const router = useRouter();
 
   useEffect(() => {
     if (!item) {
@@ -61,7 +58,7 @@ export default function Checkout({ onFinish }: CheckoutProps) {
     };
     createPaymentIntent();
 
-  }, [item]);
+  }, [item, cartStore.setPaymentIntent, cartStore.paymentIntent?.id]);
 
   if (loading) return <div>Carregando...</div>;
   if (error) return <div className="text-red-500">Erro: {error}</div>;

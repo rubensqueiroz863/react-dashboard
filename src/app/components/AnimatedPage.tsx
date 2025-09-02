@@ -2,12 +2,10 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useUser } from "@clerk/nextjs";
 
-type Props = {
-  userId: string | null;
-};
-
-export default function AnimatedHome({ userId }: Props) {
+export default function AnimatedHome() {
+  const { isLoaded, isSignedIn } = useUser();
 
   const fadeInUp = (delay = 0) => ({
     initial: { opacity: 0, y: 20 },
@@ -40,7 +38,8 @@ export default function AnimatedHome({ userId }: Props) {
       </motion.div>
 
       {/* Botão com animação e interatividade */}
-        <Link href={userId ? "/overview" : "/sign-in"}>
+      {isLoaded && (
+        <Link href={isSignedIn ? "/overview" : "/sign-in"}>
           <motion.button
             {...fadeInUp(1)}
             whileHover={{ scale: 1.05 }}
@@ -50,6 +49,7 @@ export default function AnimatedHome({ userId }: Props) {
             Começar agora
           </motion.button>
         </Link>
+      )}
     </section>
   );
 }

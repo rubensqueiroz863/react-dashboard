@@ -41,6 +41,8 @@ export default function CheckoutForm({ clientSecret, onSuccess }: CheckoutFormPr
     }
   };
 
+  console.log(clientSecret);
+
   if (success) {
     return (
       <div className="p-4 text-center">
