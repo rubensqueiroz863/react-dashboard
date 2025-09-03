@@ -2,7 +2,7 @@
 
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
-import { editTransaction } from "../actions";
+import { editTransaction } from "@/lib/transaction";
 
 type TransactionProps = {
   transactionId: string;

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import EditMenu from "./EditMenu";
-import { getOneTransaction } from "../actions";  
+import { getOneTransaction } from "@/lib/transaction";
 import { TransactionResponse } from "@/types/TransactionTypes";
 import Image from "next/image";
 

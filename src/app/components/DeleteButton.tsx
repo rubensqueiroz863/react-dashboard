@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation"; // ✅ next/navigation para App Router
 import DeleteMenu from "./DeleteMenu";
-import { deleteTransaction } from "../actions";  // ✅ Server Action em arquivo separado
+import { deleteTransaction } from "@/lib/transaction";
 import Image from "next/image";
 
 interface DeleteButtonProps {

@@ -1,4 +1,4 @@
-import { getOneTransaction } from "@/app/actions";
+import { getOneTransaction } from "@/lib/transaction";
 import DeleteButton from "@/app/components/DeleteButton";
 import EditButton from "@/app/components/EditButton";
 import NavBarHome from "@/app/components/NavBarHome";
@@ -27,12 +27,29 @@ export default async function TransactionPage({
     currency: transaction.currency,
   }).format(transaction.amount);
 
-  const typeColor =
-    transaction.type === "income"
-      ? "text-green-600"
-      : transaction.type === "expense"
-      ? "text-red-600"
-      : "text-gray-600";
+  const formattedDate = new Intl.DateTimeFormat("pt-BR", {
+    dateStyle: "short",
+    timeStyle: "short",
+  }).format(new Date(transaction.createdAt))
+
+
+  const statusMap: Record<string, { text: string; className: string }> = {
+    completed: { text: "Concluída", className: "bg-green-100 text-green-700" },
+    pending: { text: "Pendente", className: "bg-yellow-100 text-yellow-700" },
+    canceled: { text: "Cancelada", className: "bg-red-100 text-red-700" },
+  }
+  
+  const status = statusMap[transaction.status] ?? {
+    text: "Desconhecido",
+    className: "bg-gray-100 text-gray-700",
+  }
+
+  const typeMap: Record<string, { label: string; className: string }> = {
+    income: { label: "Receita", className: "text-green-600" },
+    expense: { label: "Despesa", className: "text-red-600" },
+  }
+
+  const typeInfo = typeMap[transaction.type] ?? { label: "", className: "text-gray-600" }
 
   return (
     <div>
@@ -48,33 +65,18 @@ export default async function TransactionPage({
                 {transaction.name || "Sem nome"}
               </h2>
               <span
-                className={`px-3 py-1 rounded-full text-sm font-medium ${
-                  transaction.status === "completed"
-                    ? "bg-green-100 text-green-700"
-                    : transaction.status === "pending"
-                    ? "bg-yellow-100 text-yellow-700"
-                    : "bg-red-100 text-red-700"
-                }`}
+                className={`px-3 py-1 rounded-full text-sm font-medium ${status.className}`}
               >
-                {transaction.status === "completed"
-                  ? "Concluída"
-                  : transaction.status === "pending"
-                  ? "Pendente"
-                  : "Cancelada"}
+                {status.text}
               </span>
             </div>
 
-            <p className={`mt-2 text-gray-600 ${typeColor}`}>
-              {transaction.type === "income"
-                ? "Receita"
-                : transaction.type === "expense"
-                ? "Despesa"
-                : ""}{" "}
-              — <span className="font-medium">{formattedAmount}</span>
+            <p className={`mt-2 text-gray-600 ${typeInfo.className}`}>
+              {typeInfo.label} — <span className="font-medium">{formattedAmount}</span>
             </p>
 
             <p className="mt-1 text-sm text-gray-500">
-              {new Date(transaction.createdAt).toLocaleString("pt-BR")}
+              {formattedDate}
             </p>
           </div>
 

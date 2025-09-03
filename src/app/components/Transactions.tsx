@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getTransactions } from "@/app/actions";
+import { getTransactions } from "@/lib/transaction";
 import { TransactionResponse } from "@/types/TransactionTypes";
 import Link from "next/link";
 

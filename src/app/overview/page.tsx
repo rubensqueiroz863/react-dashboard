@@ -1,8 +1,18 @@
 import { currentUser } from "@clerk/nextjs/server";
 import NavBarHome from "../components/NavBarHome";
 import TransactionsMenu from "../components/TransactionMenu";
-import { getTransactionsTotal } from "../actions";
+import { getTransactionsTotal } from "@/lib/transaction";
 import { formatTransactions } from "@/lib/utils";
+
+function SummaryCard({ title, value, color, bgColor }: { title: string; value: string; color: string; bgColor: string }) {
+  return (
+    <div className={`flex flex-col items-center ${bgColor} border rounded-2xl p-5 w-full md:w-1/2 shadow-sm hover:shadow-md transition`}>
+      <p className="text-md text-gray-700">{title}</p>
+      <p className={`text-xl font-semibold ${color} mt-2`}>{value}</p>
+    </div>
+  );
+}
+
 
 export default async function OverviewPage() {
   const user = await currentUser(); // pega direto no servidor
@@ -28,21 +38,9 @@ export default async function OverviewPage() {
           </h1>
 
           <div className="flex flex-col md:flex-row justify-around items-center gap-4">
-            {/* Receita */}
-            <div className="flex flex-col items-center bg-green-50 border border-green-200 rounded-2xl p-5 w-full md:w-1/2 shadow-sm hover:shadow-md transition">
-              <p className="text-md text-gray-700">Receitas no mês</p>
-              <p className="text-xl font-semibold text-green-600 mt-2">
-                {formatTransactions(totalIncome)}
-              </p>
-            </div>
-
-            {/* Despesa */}
-            <div className="flex flex-col items-center bg-red-50 border border-red-200 rounded-2xl p-5 w-full md:w-1/2 shadow-sm hover:shadow-md transition">
-              <p className="text-md text-gray-700">Despesas no mês</p>
-              <p className="text-xl font-semibold text-red-600 mt-2">
-                {formatTransactions(totalExpense)}
-              </p>
-            </div>
+            <SummaryCard title="Receitas no mês" value={formatTransactions(totalIncome)} color="text-green-600" bgColor="bg-green-50 border-green-200" />
+            
+            <SummaryCard title="Despesas no mês" value={formatTransactions(totalExpense)} color="text-red-600" bgColor="bg-red-50 border-red-200" />
           </div>
         </div>
 

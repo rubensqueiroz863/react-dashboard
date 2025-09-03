@@ -1,7 +1,7 @@
 import { fetchSubscriptionById } from "@/app/actions";
 import CheckoutButton from "@/app/components/CheckoutButton";
 import NavBarHome from "@/app/components/NavBarHome";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, subscriptionsFeatures } from "@/lib/utils";
 
 export default async function TransactionPage({
   params,
@@ -11,16 +11,16 @@ export default async function TransactionPage({
   const { id } = await params;
   const subscription = await fetchSubscriptionById(id);
 
-  const features = [
-    "Sem conexão bancária",
-    "Controle manual de contas e cartões",
-    "Criação de categorias e subcategorias",
-    "Limite de gastos ilimitados",
-    "Alerta de contas a pagar",
-    "Relatórios completos e fáceis de entender",
-    "Teste por 7 dias grátis",
-  ];
+  let features = [""];
 
+  if (subscription?.id ===  "prod_Smu3nbw50vlrWW") {
+    features = subscriptionsFeatures[0];
+  } else if (subscription?.id === "prod_SnFNXur7LDZnnd") {
+    features = subscriptionsFeatures[1];
+  } else {
+    features = subscriptionsFeatures[2];
+  }
+  
   return (
     <div>
       <NavBarHome />
@@ -38,7 +38,6 @@ export default async function TransactionPage({
             <ul className="mt-4 space-y-2 text-sm text-neutral-700 text-left w-full">
               {features.map((feature, idx) => (
                 <li key={idx} className="flex items-start">
-                  <span className="mr-2 text-blue-600 font-bold">•</span>
                   {feature}
                 </li>
               ))}

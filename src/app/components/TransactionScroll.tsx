@@ -1,10 +1,10 @@
 'use client';
-import { useEffect, useState, useRef, useCallback } from "react";
-import { getTransactionsScroll } from "@/app/actions";
+import { useEffect, useState, useRef, useCallback, memo } from "react";
+import { getTransactionsScroll } from "@/lib/transaction";
 import { TransactionResponse } from "@/types/TransactionTypes";
 import Link from "next/link";
 
-export default function TransactionsScroll({ userId, limit }: { userId: string; limit: number }) {
+function TransactionsScroll({ userId, limit }: { userId: string; limit: number }) {
   const [transactions, setTransactions] = useState<TransactionResponse[]>([]);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
@@ -95,3 +95,5 @@ export default function TransactionsScroll({ userId, limit }: { userId: string; 
     </div>
   );
 }
+
+export default memo(TransactionsScroll);
