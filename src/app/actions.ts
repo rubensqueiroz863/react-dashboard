@@ -89,3 +89,16 @@ export async function existsOrder(productId: string, userId: string) {
     return false;
   }
 }
+
+export async function deletePendingOrders(): Promise<boolean> {
+  try {
+    const deletedOrders = await prisma.order.deleteMany({
+      where: { status: "pending"},
+    });
+
+    return !!deletedOrders;
+  } catch (err) {
+    console.error("Erro ao excluir transação:", err);
+    return false;
+  }
+}

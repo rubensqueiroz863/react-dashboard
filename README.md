@@ -1,36 +1,118 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Show! Seu README já está bom, mas dá pra deixá-lo mais profissional e organizado. Aqui vai uma versão melhorada com seções bem estruturadas:
 
-## Getting Started
+💳 Projeto Next.js com Clerk, Stripe e Banco de Dados
 
-First, run the development server:
+Este projeto é uma aplicação construída com React + Next.js, utilizando:
 
-```bash
+🔑 Clerk para autenticação e gerenciamento de usuários.
+
+🎞 Framer Motion para animações interativas nas páginas.
+
+💳 Stripe para gerenciamento de planos e pagamentos recorrentes.
+
+🗄 Banco de dados PostgreSQL (hospedado no NeonDB).
+
+🔌 Integração com Belvo API para conexões financeiras.
+
+⚙️ Variáveis de Ambiente
+
+Crie um arquivo .env.local na raiz do projeto e configure as seguintes variáveis:
+
+# Clerk
+CLERK_WEBHOOK_SECRET=
+NEXT_PUBLIC_STACK_PROJECT_ID=
+NEXT_PUBLIC_STACK_PUBLISHABLE_CLIENT_KEY=
+STACK_SECRET_SERVER_KEY=
+
+# Stripe
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+
+# Belvo
+BELVO_SECRET_ID=
+BELVO_SECRET_PASSWORD=
+BELVO_ENVIRONMENT=
+
+# Banco de Dados
+DATABASE_URL=
+DATABASE_URL_UNPOOLED=
+PGHOST_UNPOOLED=
+PGUSER=
+PGDATABASE=
+PGPASSWORD=
+POSTGRES_URL=
+POSTGRES_URL_NON_POOLING=
+POSTGRES_USER=
+POSTGRES_HOST=
+POSTGRES_PASSWORD=
+POSTGRES_DATABASE=
+POSTGRES_URL_NO_SSL=
+POSTGRES_PRISMA_URL=
+
+# Outros
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+
+🚀 Como Rodar o Projeto
+
+Clone o repositório
+
+git clone https://github.com/seu-usuario/seu-repositorio.git
+cd seu-repositorio
+
+
+Instale as dependências
+
+npm install
+# ou
+yarn install
+# ou
+pnpm install
+# ou
+bun install
+
+
+Configure o banco de dados
+
+Crie o banco de dados no NeonDB
+.
+
+Atualize a variável DATABASE_URL no .env.local.
+
+Rode as migrations:
+
+npx prisma migrate dev
+
+
+Inicie o servidor de desenvolvimento
+
 npm run dev
-# or
+# ou
 yarn dev
-# or
+# ou
 pnpm dev
-# or
+# ou
 bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Abra no navegador
+http://localhost:3000
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+📦 Deploy
 
-## Learn More
+Frontend hospedado na Vercel
+.
 
-To learn more about Next.js, take a look at the following resources:
+Banco de dados no NeonDB
+.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+✨ Funcionalidades
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+✅ Login e registro com Clerk.
 
-## Deploy on Vercel
+✅ Animações fluidas com Framer Motion.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+✅ Pagamentos e assinaturas via Stripe.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+✅ Integração com Belvo para dados financeiros.
+
+✅ Persistência de dados em PostgreSQL.

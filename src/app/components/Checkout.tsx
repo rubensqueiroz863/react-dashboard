@@ -5,7 +5,7 @@ import { Elements } from "@stripe/react-stripe-js";
 import { useCartStore } from "@/store";
 import { useEffect, useState } from "react";
 import CheckoutForm from "./CheckoutForm";
-import { completePayment } from "../actions";
+import { completePayment, deletePendingOrders } from "../actions";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -75,6 +75,7 @@ export default function Checkout({ onFinish }: CheckoutProps) {
         onSuccess={async () => {
           if (cartStore.paymentIntent?.id) {
             await completePayment(cartStore.paymentIntent.id);
+            await deletePendingOrders();
           }
           cartStore.clearCart();
           onFinish(); // se quiser disparar algo extra passado como prop
