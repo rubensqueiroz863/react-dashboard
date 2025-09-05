@@ -1,5 +1,3 @@
-Show! Seu README já está bom, mas dá pra deixá-lo mais profissional e organizado. Aqui vai uma versão melhorada com seções bem estruturadas:
-
 💳 Projeto Next.js com Clerk, Stripe e Banco de Dados
 
 Este projeto é uma aplicação construída com React + Next.js, utilizando:
